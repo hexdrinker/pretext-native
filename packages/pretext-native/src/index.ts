@@ -7,6 +7,7 @@ export {
   getCacheStats,
   isNativeAvailable,
 } from './measureText';
+export type { CombinedCacheStats } from './measureText';
 
 export { useTextLayout } from './useTextLayout';
 export type { UseTextLayoutOptions, UseTextLayoutResult } from './useTextLayout';

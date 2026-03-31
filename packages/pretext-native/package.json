@@ -27,12 +27,21 @@
     "virtualization"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hexdrinker/pretext-native.git",
+    "directory": "packages/pretext-native"
+  },
+  "homepage": "https://github.com/hexdrinker/pretext-native#readme",
+  "bugs": {
+    "url": "https://github.com/hexdrinker/pretext-native/issues"
+  },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.71.0"
   },
   "dependencies": {
-    "@pretext-native/core": "0.1.0"
+    "@pretext-native/core": "workspace:^"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",

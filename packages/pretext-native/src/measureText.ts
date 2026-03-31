@@ -3,8 +3,10 @@ import {
   LayoutCache,
   type TextMeasureInput,
   type TextMeasureResult,
+  type CacheStats,
 } from '@pretext-native/core';
 import NativePretextNative from './NativePretextNative';
+import type { NativeCacheStats } from './NativePretextNative';
 import { createJsAdapter } from './jsAdapter';
 
 /** Shared layout cache instance */
@@ -95,7 +97,12 @@ export function clearCache(): void {
 /**
  * Get cache statistics.
  */
-export function getCacheStats() {
+export interface CombinedCacheStats {
+  js: CacheStats;
+  native: NativeCacheStats | null;
+}
+
+export function getCacheStats(): CombinedCacheStats {
   return {
     js: cache.getStats(),
     native: isNativeAvailable() ? NativePretextNative!.getCacheStats() : null,

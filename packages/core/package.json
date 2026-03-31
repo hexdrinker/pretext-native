@@ -23,6 +23,15 @@
     "react-native"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hexdrinker/pretext-native.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/hexdrinker/pretext-native#readme",
+  "bugs": {
+    "url": "https://github.com/hexdrinker/pretext-native/issues"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "jest": "^29.7.0",
