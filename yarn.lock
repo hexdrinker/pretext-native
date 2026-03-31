@@ -1403,7 +1403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pretext-native/core@npm:0.1.0, @pretext-native/core@workspace:packages/core":
+"@pretext-native/core@workspace:^, @pretext-native/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@pretext-native/core@workspace:packages/core"
   dependencies:
@@ -5481,7 +5481,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pretext-native@workspace:packages/pretext-native"
   dependencies:
-    "@pretext-native/core": "npm:0.1.0"
+    "@pretext-native/core": "workspace:^"
     "@types/jest": "npm:^29.5.0"
     "@types/react": "npm:^18.2.0"
     jest: "npm:^29.7.0"

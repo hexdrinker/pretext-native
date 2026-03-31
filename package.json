@@ -5,10 +5,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "typecheck": "turbo run typecheck",
-    "lint": "turbo run lint"
+    "build": "turbo run build --filter='*'",
+    "test": "turbo run test --filter='*'",
+    "typecheck": "turbo run typecheck --filter='*'",
+    "lint": "turbo run lint --filter='*'"
   },
   "devDependencies": {
     "prettier": "^3.2.0",

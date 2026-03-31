@@ -6,35 +6,9 @@
 
 import { computeLayout, LayoutCache } from '../src';
 import type { MeasureFunc, TextMeasureInput } from '../src';
+import { createJsAdapter } from '../../pretext-native/src/jsAdapter';
 
-// Simple heuristic measure (same as jsAdapter)
-const measure: MeasureFunc = (text, input) => {
-  const { fontSize, letterSpacing } = input;
-  let totalWidth = 0;
-  const chars = Array.from(text);
-  for (const char of chars) {
-    const code = char.codePointAt(0)!;
-    if (
-      (code >= 0x4e00 && code <= 0x9fff) ||
-      (code >= 0x3400 && code <= 0x4dbf) ||
-      (code >= 0xac00 && code <= 0xd7af) ||
-      (code >= 0x30a0 && code <= 0x30ff) ||
-      (code >= 0x3040 && code <= 0x309f)
-    ) {
-      totalWidth += fontSize;
-    } else if (/^[iljft1!|:;.,']$/.test(char)) {
-      totalWidth += fontSize * 0.35;
-    } else if (char === ' ') {
-      totalWidth += fontSize * 0.3;
-    } else {
-      totalWidth += fontSize * 0.55;
-    }
-  }
-  if (letterSpacing && chars.length > 1) {
-    totalWidth += (chars.length - 1) * letterSpacing;
-  }
-  return totalWidth;
-};
+const measure: MeasureFunc = createJsAdapter();
 
 // --- Test data generators ---
 

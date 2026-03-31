@@ -1,5 +1,5 @@
 export { tokenize } from './tokenizer';
-export { breakLines } from './lineBreaker';
+export { breakLines, lineToString } from './lineBreaker';
 export { truncateLines } from './truncation';
 export { computeLayout } from './layoutEngine';
 export { LRUCache, LayoutCache } from './cache';
