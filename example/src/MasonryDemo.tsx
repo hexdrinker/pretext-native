@@ -1,8 +1,15 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, Text, View, ScrollView, useWindowDimensions } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  ScrollView,
+  useWindowDimensions,
+} from 'react-native';
 import { measureTextSync } from 'pretext-native';
 
-const CARDS = [
+const INITIAL_CARDS = [
   {
     title: 'React Native',
     body: 'Build native apps using React. A framework for building native applications using JavaScript and React.',
@@ -35,7 +42,7 @@ const CARDS = [
   },
   {
     title: 'Cache',
-    body: 'Two-tier LRU cache: word-level measurements and full layout results. Repeated measurements are essentially free. Cache hit rates typically exceed 90% in real apps.',
+    body: 'Two-tier LRU cache: word-level measurements and full layout results. Repeated measurements are essentially free.',
     color: '#ede9fe',
   },
   {
@@ -45,23 +52,13 @@ const CARDS = [
   },
   {
     title: 'Truncation',
-    body: 'Know if text will be truncated before rendering. Show "Read More" buttons without hidden render passes or onTextLayout callbacks.',
+    body: 'Know if text will be truncated before rendering. Show "Read More" buttons without hidden render passes.',
     color: '#fee2e2',
   },
   {
     title: '한글 지원',
     body: '한국어 텍스트도 정확하게 측정합니다. 음절 단위 줄바꿈과 올바른 폰트 메트릭을 제공합니다.',
     color: '#f0fdf4',
-  },
-  {
-    title: 'Hooks',
-    body: 'useTextLayout hook for easy integration. Sync-first with async fallback. Memoized and cache-aware.',
-    color: '#fff7ed',
-  },
-  {
-    title: 'Zero Layout Shift',
-    body: 'Calculate dimensions upfront. No more CLS. No more placeholder shimmer heights that are always wrong.',
-    color: '#f5f3ff',
   },
 ];
 
@@ -72,21 +69,27 @@ const BODY_LINE_HEIGHT = 19;
 const CARD_PADDING = 12;
 const GAP = 8;
 const COLUMNS = 2;
+const EDITABLE_INDEX = 0;
 
 export function MasonryDemo() {
   const { width: screenWidth } = useWindowDimensions();
   const colWidth = (screenWidth - 24 - GAP * (COLUMNS - 1)) / COLUMNS;
   const textWidth = colWidth - CARD_PADDING * 2;
 
-  const columns = useMemo(() => {
-    const cols: { cards: typeof CARDS; heights: number[] }[] = Array.from(
-      { length: COLUMNS },
-      () => ({ cards: [], heights: [] }),
+  const [editableText, setEditableText] = useState(INITIAL_CARDS[EDITABLE_INDEX].body);
+
+  const cards = useMemo(() => {
+    return INITIAL_CARDS.map((card, i) =>
+      i === EDITABLE_INDEX ? { ...card, body: editableText } : card,
     );
+  }, [editableText]);
+
+  const columns = useMemo(() => {
+    const cols: { cards: (typeof INITIAL_CARDS[0] & { measured: { titleH: number; bodyH: number; totalH: number } })[]; }[] =
+      Array.from({ length: COLUMNS }, () => ({ cards: [] }));
     const colTotals = new Array(COLUMNS).fill(0);
 
-    for (const card of CARDS) {
-      // Measure title
+    for (const card of cards) {
       const titleResult = measureTextSync({
         text: card.title,
         width: textWidth,
@@ -95,7 +98,6 @@ export function MasonryDemo() {
         fontWeight: '700',
       });
 
-      // Measure body
       const bodyResult = measureTextSync({
         text: card.body,
         width: textWidth,
@@ -103,8 +105,7 @@ export function MasonryDemo() {
         lineHeight: BODY_LINE_HEIGHT,
       });
 
-      const cardHeight =
-        CARD_PADDING * 2 + titleResult.height + 6 + bodyResult.height;
+      const totalH = CARD_PADDING * 2 + titleResult.height + 6 + bodyResult.height;
 
       // Place in shortest column
       let minCol = 0;
@@ -112,21 +113,38 @@ export function MasonryDemo() {
         if (colTotals[c] < colTotals[minCol]) minCol = c;
       }
 
-      cols[minCol].cards.push(card);
-      cols[minCol].heights.push(cardHeight);
-      colTotals[minCol] += cardHeight + GAP;
+      cols[minCol].cards.push({
+        ...card,
+        measured: {
+          titleH: titleResult.height,
+          bodyH: bodyResult.height,
+          totalH,
+        },
+      });
+      colTotals[minCol] += totalH + GAP;
     }
 
     return cols;
-  }, [textWidth]);
+  }, [textWidth, cards]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Masonry Layout</Text>
       <Text style={styles.desc}>
-        Card heights predicted by pretext-native. No DOM measurement needed —
-        cards are placed in the shortest column instantly.
+        Card heights predicted by pretext-native. Edit the first card's text
+        below and watch the layout reflow instantly.
       </Text>
+
+      <View style={styles.editSection}>
+        <Text style={styles.editLabel}>Edit "{INITIAL_CARDS[EDITABLE_INDEX].title}" card:</Text>
+        <TextInput
+          style={styles.input}
+          value={editableText}
+          onChangeText={setEditableText}
+          multiline
+          placeholder="Type to see masonry reflow..."
+        />
+      </View>
 
       <ScrollView>
         <View style={styles.masonry}>
@@ -134,14 +152,17 @@ export function MasonryDemo() {
             <View key={ci} style={[styles.column, { width: colWidth }]}>
               {col.cards.map((card, i) => (
                 <View
-                  key={i}
+                  key={`${ci}-${i}`}
                   style={[
                     styles.card,
-                    { height: col.heights[i], backgroundColor: card.color },
+                    { minHeight: card.measured.totalH, backgroundColor: card.color },
                   ]}
                 >
                   <Text style={styles.cardTitle}>{card.title}</Text>
                   <Text style={styles.cardBody}>{card.body}</Text>
+                  <Text style={styles.cardMeta}>
+                    {card.measured.totalH}px
+                  </Text>
                 </View>
               ))}
             </View>
@@ -156,6 +177,17 @@ const styles = StyleSheet.create({
   container: { flex: 1, gap: 12 },
   heading: { fontSize: 16, fontWeight: '700' },
   desc: { fontSize: 13, color: '#666' },
+  editSection: { gap: 6 },
+  editLabel: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 13,
+    backgroundColor: '#fff',
+    minHeight: 50,
+  },
   masonry: {
     flexDirection: 'row',
     gap: GAP,
@@ -176,5 +208,12 @@ const styles = StyleSheet.create({
     fontSize: BODY_FONT_SIZE,
     lineHeight: BODY_LINE_HEIGHT,
     color: '#4b5563',
+  },
+  cardMeta: {
+    fontSize: 9,
+    fontFamily: 'monospace',
+    color: '#9ca3af',
+    marginTop: 4,
+    alignSelf: 'flex-end',
   },
 });

@@ -37,7 +37,7 @@ class PretextNativeModule(reactContext: ReactApplicationContext) :
             try {
                 val results = Arguments.createArray()
                 for (i in 0 until inputs.size()) {
-                    val input = inputs.getMap(i)
+                    val input = inputs.getMap(i) ?: continue
                     results.pushMap(textMeasurer.measure(input))
                 }
                 promise.resolve(results)

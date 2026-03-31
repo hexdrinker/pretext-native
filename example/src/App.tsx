@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
   Pressable,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BasicMeasureDemo } from './BasicMeasureDemo';
 import { ChatListDemo } from './ChatListDemo';

@@ -1,7 +1,16 @@
 __tests__/
+benchmark/
 example/
 .turbo/
-*.tsbuildinfo
+.omc/
+.claude/
 .github/
+*.tsbuildinfo
+*.log
+jest.config.js
+tsconfig.json
 turbo.json
 CLAUDE.md
+.eslintrc*
+.prettierrc*
+.watchmanconfig

@@ -43,6 +43,10 @@ example/ios/build/
 example/android/build/
 example/android/.gradle/
 example/android/app/build/
+example/.bundle/
+
+# Logs
+*.log
 
 # Env
 .env
