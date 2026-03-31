@@ -1,9 +1,9 @@
-name: Release
+name: Release Core
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'core@*'
 
 jobs:
   publish:
@@ -34,17 +34,17 @@ jobs:
       - name: Test
         run: yarn test
 
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#core@}" >> "$GITHUB_OUTPUT"
+
       - name: Publish @hexdrinker/pretext-native-core
         run: cd packages/core && npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish pretext-native
-        run: cd packages/pretext-native && npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          name: "@hexdrinker/pretext-native-core@${{ steps.version.outputs.version }}"
           generate_release_notes: true
