@@ -12,14 +12,39 @@ import { BasicMeasureDemo } from './BasicMeasureDemo';
 import { ChatListDemo } from './ChatListDemo';
 import { TruncationDemo } from './TruncationDemo';
 import { BatchDemo } from './BatchDemo';
+import { AccordionDemo } from './AccordionDemo';
+import { MasonryDemo } from './MasonryDemo';
+import { BubbleDemo } from './BubbleDemo';
+import { ShowMoreDemo } from './ShowMoreDemo';
+import { FontCompareDemo } from './FontCompareDemo';
+import { DynamicWidthDemo } from './DynamicWidthDemo';
+import { PerformanceDemo } from './PerformanceDemo';
 
-type DemoKey = 'basic' | 'chat' | 'truncation' | 'batch';
+type DemoKey =
+  | 'basic'
+  | 'bubbles'
+  | 'chat'
+  | 'accordion'
+  | 'showmore'
+  | 'masonry'
+  | 'truncation'
+  | 'fonts'
+  | 'dynamic'
+  | 'batch'
+  | 'perf';
 
 const DEMOS: { key: DemoKey; label: string }[] = [
-  { key: 'basic', label: 'Basic Measure' },
+  { key: 'basic', label: 'Basic' },
+  { key: 'bubbles', label: 'Bubbles' },
   { key: 'chat', label: 'Chat List' },
+  { key: 'accordion', label: 'Accordion' },
+  { key: 'showmore', label: 'Show More' },
+  { key: 'masonry', label: 'Masonry' },
   { key: 'truncation', label: 'Truncation' },
-  { key: 'batch', label: 'Batch Pre-warm' },
+  { key: 'fonts', label: 'Fonts' },
+  { key: 'dynamic', label: 'Dynamic' },
+  { key: 'batch', label: 'Batch' },
+  { key: 'perf', label: 'Benchmark' },
 ];
 
 export default function App() {
@@ -27,9 +52,14 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <Text style={styles.title}>pretext-native Example</Text>
+      <Text style={styles.title}>pretext-native</Text>
 
-      <View style={styles.tabs}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.tabScroll}
+        contentContainerStyle={styles.tabs}
+      >
         {DEMOS.map((d) => (
           <Pressable
             key={d.key}
@@ -46,14 +76,27 @@ export default function App() {
             </Text>
           </Pressable>
         ))}
-      </View>
-
-      <ScrollView style={styles.content}>
-        {active === 'basic' && <BasicMeasureDemo />}
-        {active === 'chat' && <ChatListDemo />}
-        {active === 'truncation' && <TruncationDemo />}
-        {active === 'batch' && <BatchDemo />}
       </ScrollView>
+
+      {/* Demos with their own scroll (FlatList/ScrollView) get a plain View wrapper */}
+      {(active === 'chat' || active === 'bubbles' || active === 'fonts' || active === 'showmore' || active === 'perf') ? (
+        <View style={styles.content}>
+          {active === 'bubbles' && <BubbleDemo />}
+          {active === 'chat' && <ChatListDemo />}
+          {active === 'showmore' && <ShowMoreDemo />}
+          {active === 'fonts' && <FontCompareDemo />}
+          {active === 'perf' && <PerformanceDemo />}
+        </View>
+      ) : (
+        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+          {active === 'basic' && <BasicMeasureDemo />}
+          {active === 'accordion' && <AccordionDemo />}
+          {active === 'masonry' && <MasonryDemo />}
+          {active === 'truncation' && <TruncationDemo />}
+          {active === 'dynamic' && <DynamicWidthDemo />}
+          {active === 'batch' && <BatchDemo />}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -64,22 +107,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     textAlign: 'center',
-    paddingVertical: 12,
+    paddingVertical: 10,
+  },
+  tabScroll: {
+    maxHeight: 44,
   },
   tabs: {
-    flexDirection: 'row',
     paddingHorizontal: 12,
-    gap: 8,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#e0e0e0',
+    gap: 6,
     alignItems: 'center',
   },
+  tab: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#e5e7eb',
+  },
   tabActive: { backgroundColor: '#3b82f6' },
-  tabText: { fontSize: 12, fontWeight: '600', color: '#333' },
+  tabText: { fontSize: 13, fontWeight: '600', color: '#4b5563' },
   tabTextActive: { color: '#fff' },
   content: { flex: 1, padding: 12 },
 });
