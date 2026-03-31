@@ -78,12 +78,14 @@ const getItemLayout = (data, index) => {
 ```tsx
 import { prewarmCache } from 'pretext-native'
 
-await prewarmCache(messages.map((msg) => ({
-  text: msg.body,
-  width: CONTENT_WIDTH,
-  fontSize: 15,
-  lineHeight: 22,
-})))
+await prewarmCache(
+  messages.map((msg) => ({
+    text: msg.body,
+    width: CONTENT_WIDTH,
+    fontSize: 15,
+    lineHeight: 22,
+  })),
+)
 ```
 
 ## API
@@ -94,28 +96,28 @@ await prewarmCache(messages.map((msg) => ({
 
 **옵션:**
 
-| 옵션            | 타입      | 필수 | 설명                                                |
-| --------------- | --------- | ---- | --------------------------------------------------- |
-| `text`          | `string`  | O    | 측정할 텍스트                                       |
-| `width`         | `number`  | O    | 컨테이너 너비 (px)                                  |
-| `fontSize`      | `number`  | O    | 폰트 크기 (px)                                      |
-| `fontFamily`    | `string`  | X    | 폰트 패밀리 이름                                    |
-| `fontWeight`    | `string`  | X    | `"100"`–`"900"`, `"bold"`, `"normal"`               |
-| `lineHeight`    | `number`  | X    | 줄 높이 (px)                                        |
-| `letterSpacing` | `number`  | X    | 자간 (px)                                           |
-| `maxLines`      | `number`  | X    | 이 줄 수 이후 잘라냄                                |
-| `enabled`       | `boolean` | X    | `false`로 설정하면 측정 건너뜀 (기본값: `true`)     |
+| 옵션            | 타입      | 필수 | 설명                                            |
+| --------------- | --------- | ---- | ----------------------------------------------- |
+| `text`          | `string`  | O    | 측정할 텍스트                                   |
+| `width`         | `number`  | O    | 컨테이너 너비 (px)                              |
+| `fontSize`      | `number`  | O    | 폰트 크기 (px)                                  |
+| `fontFamily`    | `string`  | X    | 폰트 패밀리 이름                                |
+| `fontWeight`    | `string`  | X    | `"100"`–`"900"`, `"bold"`, `"normal"`           |
+| `lineHeight`    | `number`  | X    | 줄 높이 (px)                                    |
+| `letterSpacing` | `number`  | X    | 자간 (px)                                       |
+| `maxLines`      | `number`  | X    | 이 줄 수 이후 잘라냄                            |
+| `enabled`       | `boolean` | X    | `false`로 설정하면 측정 건너뜀 (기본값: `true`) |
 
 **반환값:**
 
-| 프로퍼티      | 타입                        | 설명                                   |
-| ------------- | --------------------------- | -------------------------------------- |
-| `height`      | `number`                    | 계산된 텍스트 높이 (px)                |
-| `lineCount`   | `number`                    | 줄바꿈 후 총 줄 수                     |
-| `isTruncated` | `boolean`                   | `maxLines`에 의해 잘렸으면 `true`      |
-| `result`      | `TextMeasureResult \| null` | 줄별 데이터를 포함한 전체 결과 객체    |
-| `isLoading`   | `boolean`                   | 비동기 측정 진행 중이면 `true`         |
-| `error`       | `Error \| null`             | 측정 실패 시 에러                      |
+| 프로퍼티      | 타입                        | 설명                                |
+| ------------- | --------------------------- | ----------------------------------- |
+| `height`      | `number`                    | 계산된 텍스트 높이 (px)             |
+| `lineCount`   | `number`                    | 줄바꿈 후 총 줄 수                  |
+| `isTruncated` | `boolean`                   | `maxLines`에 의해 잘렸으면 `true`   |
+| `result`      | `TextMeasureResult \| null` | 줄별 데이터를 포함한 전체 결과 객체 |
+| `isLoading`   | `boolean`                   | 비동기 측정 진행 중이면 `true`      |
+| `error`       | `Error \| null`             | 측정 실패 시 에러                   |
 
 ### `measureTextSync(input): TextMeasureResult`
 
