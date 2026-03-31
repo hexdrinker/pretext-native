@@ -19,6 +19,7 @@ import { ShowMoreDemo } from './ShowMoreDemo';
 import { FontCompareDemo } from './FontCompareDemo';
 import { DynamicWidthDemo } from './DynamicWidthDemo';
 import { PerformanceDemo } from './PerformanceDemo';
+import { ObstacleTextDemo } from './ObstacleTextDemo';
 
 type DemoKey =
   | 'basic'
@@ -31,7 +32,8 @@ type DemoKey =
   | 'fonts'
   | 'dynamic'
   | 'batch'
-  | 'perf';
+  | 'perf'
+  | 'obstacle';
 
 const DEMOS: { key: DemoKey; label: string }[] = [
   { key: 'basic', label: 'Basic' },
@@ -44,6 +46,7 @@ const DEMOS: { key: DemoKey; label: string }[] = [
   { key: 'fonts', label: 'Fonts' },
   { key: 'dynamic', label: 'Dynamic' },
   { key: 'batch', label: 'Batch' },
+  { key: 'obstacle', label: 'Obstacle' },
   { key: 'perf', label: 'Benchmark' },
 ];
 
@@ -79,13 +82,14 @@ export default function App() {
       </ScrollView>
 
       {/* Demos with their own scroll (FlatList/ScrollView) get a plain View wrapper */}
-      {(active === 'chat' || active === 'bubbles' || active === 'fonts' || active === 'showmore' || active === 'perf') ? (
+      {(active === 'chat' || active === 'bubbles' || active === 'fonts' || active === 'showmore' || active === 'perf' || active === 'obstacle') ? (
         <View style={styles.content}>
           {active === 'bubbles' && <BubbleDemo />}
           {active === 'chat' && <ChatListDemo />}
           {active === 'showmore' && <ShowMoreDemo />}
           {active === 'fonts' && <FontCompareDemo />}
           {active === 'perf' && <PerformanceDemo />}
+          {active === 'obstacle' && <ObstacleTextDemo />}
         </View>
       ) : (
         <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
