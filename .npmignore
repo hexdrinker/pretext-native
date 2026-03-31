@@ -1,0 +1,7 @@
+__tests__/
+example/
+.turbo/
+*.tsbuildinfo
+.github/
+turbo.json
+CLAUDE.md

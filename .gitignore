@@ -1,0 +1,52 @@
+node_modules/
+lib/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+*.tgz
+
+# iOS
+packages/pretext-native/ios/build/
+*.xcworkspace
+Pods/
+
+# Android
+packages/pretext-native/android/build/
+packages/pretext-native/android/.gradle/
+local.properties
+
+# Example
+packages/pretext-native/example/ios/Pods/
+packages/pretext-native/example/android/build/
+packages/pretext-native/example/android/.gradle/
+
+# Env
+.env
+.env.*
+
+# Agents
+.claude
+.omc
+.omx
