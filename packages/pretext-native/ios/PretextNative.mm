@@ -123,6 +123,7 @@ static NSDictionary *measureTextWithInput(NSDictionary *input) {
 
     CFArrayRef ctLines = CTFrameGetLines(frame);
     CFIndex lineCount = CFArrayGetCount(ctLines);
+    CFIndex ctLineCount = lineCount; // physical count — ctLines is safe to access only up to this index
 
     // Extract line strings
     NSMutableArray<NSString *> *lines = [NSMutableArray arrayWithCapacity:lineCount];
@@ -156,17 +157,17 @@ static NSDictionary *measureTextWithInput(NSDictionary *input) {
         totalHeight = lineCount * lineHeight;
     } else {
         // Use line origins to compute height
-        if (lineCount > 0) {
-            CGPoint *origins = (CGPoint *)malloc(sizeof(CGPoint) * lineCount);
+        if (ctLineCount > 0) {
+            CGPoint *origins = (CGPoint *)malloc(sizeof(CGPoint) * ctLineCount);
             CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), origins);
 
-            CTLineRef lastLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineCount - 1);
+            CTLineRef lastLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, ctLineCount - 1);
             CGFloat ascent, descent, leading;
             CTLineGetTypographicBounds(lastLine, &ascent, &descent, &leading);
 
             // Origins are in flipped coordinates from bottom
             CGFloat firstOriginY = origins[0].y;
-            CGFloat lastOriginY = origins[lineCount - 1].y;
+            CGFloat lastOriginY = origins[ctLineCount - 1].y;
             totalHeight = (firstOriginY - lastOriginY) + ascent + descent + leading;
             free(origins);
         } else {
