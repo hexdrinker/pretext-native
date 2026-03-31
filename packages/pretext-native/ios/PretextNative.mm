@@ -157,7 +157,7 @@ static NSDictionary *measureTextWithInput(NSDictionary *input) {
     } else {
         // Use line origins to compute height
         if (lineCount > 0) {
-            CGPoint *origins = malloc(sizeof(CGPoint) * lineCount);
+            CGPoint *origins = (CGPoint *)malloc(sizeof(CGPoint) * lineCount);
             CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), origins);
 
             CTLineRef lastLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineCount - 1);
@@ -189,7 +189,7 @@ static NSDictionary *measureTextWithInput(NSDictionary *input) {
                 totalHeight = maxLines * lineHeight;
             } else {
                 // Recalculate based on truncated line count
-                CGPoint *origins = malloc(sizeof(CGPoint) * lineCount);
+                CGPoint *origins = (CGPoint *)malloc(sizeof(CGPoint) * lineCount);
                 CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), origins);
 
                 CTLineRef truncLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, maxLines - 1);
@@ -230,16 +230,30 @@ RCT_EXPORT_MODULE()
 
 #ifdef RCT_NEW_ARCH_ENABLED
 
-- (NSDictionary *)measureTextSync:(NSDictionary *)input {
-    return measureTextWithInput(input);
+static NSDictionary *dictFromTextInput(JS::NativePretextNative::TextMeasureNativeInput &input) {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    dict[@"text"] = input.text();
+    dict[@"width"] = @(input.width());
+    dict[@"fontSize"] = @(input.fontSize());
+    if (input.fontFamily()) dict[@"fontFamily"] = input.fontFamily();
+    if (input.fontWeight()) dict[@"fontWeight"] = input.fontWeight();
+    if (input.lineHeight().has_value()) dict[@"lineHeight"] = @(input.lineHeight().value());
+    if (input.letterSpacing().has_value()) dict[@"letterSpacing"] = @(input.letterSpacing().value());
+    if (input.maxLines().has_value()) dict[@"maxLines"] = @(input.maxLines().value());
+    return dict;
 }
 
-- (void)measureText:(NSDictionary *)input
+- (NSDictionary *)measureTextSync:(JS::NativePretextNative::TextMeasureNativeInput &)input {
+    return measureTextWithInput(dictFromTextInput(input));
+}
+
+- (void)measureText:(JS::NativePretextNative::TextMeasureNativeInput &)input
              resolve:(RCTPromiseResolveBlock)resolve
               reject:(RCTPromiseRejectBlock)reject {
+    NSDictionary *dict = dictFromTextInput(input);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @try {
-            NSDictionary *result = measureTextWithInput(input);
+            NSDictionary *result = measureTextWithInput(dict);
             resolve(result);
         } @catch (NSException *exception) {
             reject(@"MEASURE_ERROR", exception.reason, nil);
@@ -247,7 +261,7 @@ RCT_EXPORT_MODULE()
     });
 }
 
-- (void)measureTextBatch:(NSArray<NSDictionary *> *)inputs
+- (void)measureTextBatch:(NSArray *)inputs
                   resolve:(RCTPromiseResolveBlock)resolve
                    reject:(RCTPromiseRejectBlock)reject {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
