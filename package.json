@@ -2,7 +2,8 @@
   "name": "pretext-native-monorepo",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "example"
   ],
   "scripts": {
     "build": "turbo run build --filter='*'",

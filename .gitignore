@@ -38,9 +38,11 @@ packages/pretext-native/android/.gradle/
 local.properties
 
 # Example
-packages/pretext-native/example/ios/Pods/
-packages/pretext-native/example/android/build/
-packages/pretext-native/example/android/.gradle/
+example/ios/Pods/
+example/ios/build/
+example/android/build/
+example/android/.gradle/
+example/android/app/build/
 
 # Env
 .env

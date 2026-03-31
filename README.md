@@ -19,11 +19,11 @@ In React Native, knowing the actual height and line breaks of text requires rend
 
 ```
 ┌─────────────┐     ┌──────────────────┐     ┌─────────────┐
-│  Your Text   │ ──▶ │  Native Engine    │ ──▶ │   Result     │
-│  + Style     │     │  iOS: CoreText    │     │  height      │
-│  + Width     │     │  Android: Static  │     │  lineCount   │
-│              │     │    Layout         │     │  lines[]     │
-│              │     │  JS: Heuristic    │     │  truncated   │
+│  Your Text  │ ──▶ │  Native Engine   │ ──▶ │   Result    │
+│  + Style    │     │  iOS: CoreText   │     │  height     │
+│  + Width    │     │  Android: Static │     │  lineCount  │
+│             │     │    Layout        │     │  lines[]    │
+│             │     │  JS: Heuristic   │     │  truncated  │
 └─────────────┘     └──────────────────┘     └─────────────┘
 ```
 
@@ -49,7 +49,7 @@ cd ios && pod install
 ### `useTextLayout` Hook
 
 ```tsx
-import { useTextLayout } from 'pretext-native';
+import { useTextLayout } from 'pretext-native'
 
 function MessageBubble({ text, width }) {
   const { height, lineCount, isTruncated } = useTextLayout({
@@ -58,15 +58,18 @@ function MessageBubble({ text, width }) {
     fontSize: 15,
     lineHeight: 22,
     maxLines: 3,
-  });
+  })
 
   return (
     <View style={{ height }}>
-      <Text style={{ fontSize: 15, lineHeight: 22 }} numberOfLines={3}>
+      <Text
+        style={{ fontSize: 15, lineHeight: 22 }}
+        numberOfLines={3}
+      >
         {text}
       </Text>
     </View>
-  );
+  )
 }
 ```
 
@@ -93,17 +96,17 @@ const getItemLayout = (data, index) => {
 ### Batch Pre-warming
 
 ```tsx
-import { prewarmCache } from 'pretext-native';
+import { prewarmCache } from 'pretext-native'
 
 // Pre-calculate before rendering a large list
 await prewarmCache(
-  messages.map(msg => ({
+  messages.map((msg) => ({
     text: msg.body,
     width: CONTENT_WIDTH,
     fontSize: 15,
     lineHeight: 22,
-  }))
-);
+  })),
+)
 ```
 
 ## API Reference
@@ -114,28 +117,28 @@ React hook for pre-render text measurement.
 
 **Options** (`UseTextLayoutOptions`):
 
-| Property | Type | Required | Description |
-|---|---|---|---|
-| `text` | `string` | Yes | Text to measure |
-| `width` | `number` | Yes | Container width in pixels |
-| `fontSize` | `number` | Yes | Font size in pixels |
-| `fontFamily` | `string` | No | Font family name |
-| `fontWeight` | `string` | No | Font weight (`"100"` - `"900"`, `"bold"`, `"normal"`) |
-| `lineHeight` | `number` | No | Line height in pixels |
-| `letterSpacing` | `number` | No | Letter spacing in pixels |
-| `maxLines` | `number` | No | Maximum number of lines |
-| `enabled` | `boolean` | No | Set `false` to skip measurement (default: `true`) |
+| Property        | Type      | Required | Description                                           |
+| --------------- | --------- | -------- | ----------------------------------------------------- |
+| `text`          | `string`  | Yes      | Text to measure                                       |
+| `width`         | `number`  | Yes      | Container width in pixels                             |
+| `fontSize`      | `number`  | Yes      | Font size in pixels                                   |
+| `fontFamily`    | `string`  | No       | Font family name                                      |
+| `fontWeight`    | `string`  | No       | Font weight (`"100"` - `"900"`, `"bold"`, `"normal"`) |
+| `lineHeight`    | `number`  | No       | Line height in pixels                                 |
+| `letterSpacing` | `number`  | No       | Letter spacing in pixels                              |
+| `maxLines`      | `number`  | No       | Maximum number of lines                               |
+| `enabled`       | `boolean` | No       | Set `false` to skip measurement (default: `true`)     |
 
 **Returns** (`UseTextLayoutResult`):
 
-| Property | Type | Description |
-|---|---|---|
-| `height` | `number` | Computed text height (0 if not measured) |
-| `lineCount` | `number` | Number of lines (0 if not measured) |
-| `isTruncated` | `boolean` | Whether text was truncated by `maxLines` |
-| `result` | `TextMeasureResult \| null` | Full result object |
-| `isLoading` | `boolean` | `true` while async measurement is in progress |
-| `error` | `Error \| null` | Error if measurement failed |
+| Property      | Type                        | Description                                   |
+| ------------- | --------------------------- | --------------------------------------------- |
+| `height`      | `number`                    | Computed text height (0 if not measured)      |
+| `lineCount`   | `number`                    | Number of lines (0 if not measured)           |
+| `isTruncated` | `boolean`                   | Whether text was truncated by `maxLines`      |
+| `result`      | `TextMeasureResult \| null` | Full result object                            |
+| `isLoading`   | `boolean`                   | `true` while async measurement is in progress |
+| `error`       | `Error \| null`             | Error if measurement failed                   |
 
 ### `measureTextSync(input): TextMeasureResult`
 
@@ -165,12 +168,12 @@ Check if the native TurboModule is loaded.
 
 Benchmarked on Apple M-series (Node.js, JS engine only):
 
-| Scenario | Without Cache | With Cache (warm) |
-|---|---|---|
-| Short text (13 chars) | 815K ops/s | 5.8M ops/s |
-| Medium text (180 chars) | 112K ops/s | 2.3M ops/s |
-| Long text (1.2K chars) | 17K ops/s | 503K ops/s |
-| CJK text (120 chars) | 159K ops/s | 2.7M ops/s |
+| Scenario                | Without Cache | With Cache (warm) |
+| ----------------------- | ------------- | ----------------- |
+| Short text (13 chars)   | 815K ops/s    | 5.8M ops/s        |
+| Medium text (180 chars) | 112K ops/s    | 2.3M ops/s        |
+| Long text (1.2K chars)  | 17K ops/s     | 503K ops/s        |
+| CJK text (120 chars)    | 159K ops/s    | 2.7M ops/s        |
 
 Cache hit rate with 50 unique texts across 1,000 lookups: **95%**
 
@@ -178,10 +181,10 @@ Native measurement is even faster as it bypasses JS tokenization entirely.
 
 ## Packages
 
-| Package | Description |
-|---|---|
-| [`@pretext-native/core`](./packages/core) | Platform-independent text layout engine (zero dependencies) |
-| [`pretext-native`](./packages/pretext-native) | React Native wrapper with native modules |
+| Package                                       | Description                                                 |
+| --------------------------------------------- | ----------------------------------------------------------- |
+| [`@pretext-native/core`](./packages/core)     | Platform-independent text layout engine (zero dependencies) |
+| [`pretext-native`](./packages/pretext-native) | React Native wrapper with native modules                    |
 
 ## Architecture
 
