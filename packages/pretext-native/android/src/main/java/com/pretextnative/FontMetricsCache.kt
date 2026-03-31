@@ -1,6 +1,7 @@
 package com.pretextnative
 
 import android.graphics.Typeface
+import android.os.Build
 import android.text.TextPaint
 import android.util.LruCache
 
@@ -24,20 +25,48 @@ class FontMetricsCache(maxSize: Int = 50) {
 
     val size: Int get() = paintCache.size()
 
-    private fun buildPaint(fontFamily: String?, fontWeight: String?, fontSize: Float): TextPaint {
-        val style = when (fontWeight) {
-            "700", "800", "900", "bold" -> Typeface.BOLD
-            else -> Typeface.NORMAL
+    private fun parseWeight(fontWeight: String?): Int {
+        return when (fontWeight) {
+            "100" -> 100
+            "200" -> 200
+            "300" -> 300
+            "400", "normal", null -> 400
+            "500" -> 500
+            "600" -> 600
+            "700", "bold" -> 700
+            "800" -> 800
+            "900" -> 900
+            else -> fontWeight?.toIntOrNull() ?: 400
         }
+    }
 
-        val typeface = if (!fontFamily.isNullOrEmpty()) {
-            try {
-                Typeface.create(fontFamily, style)
-            } catch (_: Exception) {
+    private fun buildPaint(fontFamily: String?, fontWeight: String?, fontSize: Float): TextPaint {
+        val weight = parseWeight(fontWeight)
+
+        val typeface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // API 28+: supports fine-grained weight (100-900)
+            val base = if (!fontFamily.isNullOrEmpty()) {
+                try {
+                    Typeface.create(fontFamily, Typeface.NORMAL)
+                } catch (_: Exception) {
+                    Typeface.DEFAULT
+                }
+            } else {
+                Typeface.DEFAULT
+            }
+            Typeface.create(base, weight, false)
+        } else {
+            // Pre-API 28: only NORMAL/BOLD
+            val style = if (weight >= 700) Typeface.BOLD else Typeface.NORMAL
+            if (!fontFamily.isNullOrEmpty()) {
+                try {
+                    Typeface.create(fontFamily, style)
+                } catch (_: Exception) {
+                    Typeface.create(Typeface.DEFAULT, style)
+                }
+            } else {
                 Typeface.create(Typeface.DEFAULT, style)
             }
-        } else {
-            Typeface.create(Typeface.DEFAULT, style)
         }
 
         return TextPaint().apply {
