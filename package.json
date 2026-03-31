@@ -10,10 +10,10 @@
     "react-dom": "19.2.3"
   },
   "scripts": {
-    "build": "turbo run build --filter='!docs'",
-    "test": "turbo run test --filter='!docs'",
-    "typecheck": "turbo run typecheck --filter='!docs'",
-    "lint": "turbo run lint --filter='!docs'",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
     "docs:dev": "cd docs && yarn start",
     "docs:build": "cd docs && yarn build"
   },

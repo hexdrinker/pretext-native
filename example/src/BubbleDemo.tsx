@@ -59,12 +59,6 @@ export function BubbleDemo() {
       // Use a heuristic: if only 1 line, measure with very large width
       let tightWidth = maxBubbleWidth;
       if (result.lineCount === 1) {
-        const unbounded = measureTextSync({
-          text: msg.text,
-          width: 9999,
-          fontSize: FONT_SIZE,
-          lineHeight: LINE_HEIGHT,
-        });
         // The text fits in one line, so use just enough width
         // Estimate from line content — add padding
         tightWidth = Math.min(

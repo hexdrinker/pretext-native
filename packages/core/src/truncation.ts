@@ -1,5 +1,4 @@
 import type { Token, MeasureFunc, TextMeasureInput } from './types';
-import { lineToString } from './lineBreaker';
 
 const ELLIPSIS = '\u2026'; // …
 

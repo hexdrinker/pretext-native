@@ -21,8 +21,7 @@ function resolveLineHeight(input: TextMeasureInput): number {
  */
 function createCachedMeasure(
   measure: MeasureFunc,
-  cache: LayoutCache,
-  input: TextMeasureInput
+  cache: LayoutCache
 ): MeasureFunc {
   return (text: string, inp: TextMeasureInput): number => {
     const cached = cache.getWordWidth(
@@ -68,7 +67,7 @@ export function computeLayout(
     }
   }
 
-  const cachedMeasure = cache ? createCachedMeasure(measure, cache, input) : measure;
+  const cachedMeasure = cache ? createCachedMeasure(measure, cache) : measure;
 
   // Step 1: Tokenize
   const tokens = tokenize(input.text);
