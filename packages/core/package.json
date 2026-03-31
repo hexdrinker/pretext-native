@@ -1,6 +1,6 @@
 {
-  "name": "@pretext-native/core",
-  "version": "0.1.0",
+  "name": "@hexdrinker/pretext-native-core",
+  "version": "0.0.1",
   "description": "Platform-independent text layout engine for pre-rendering text measurement",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

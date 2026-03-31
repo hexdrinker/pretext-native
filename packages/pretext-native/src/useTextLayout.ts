@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import type { TextMeasureInput, TextMeasureResult } from '@pretext-native/core';
+import type { TextMeasureInput, TextMeasureResult } from '@hexdrinker/pretext-native-core';
 import { measureTextSync, measureText } from './measureText';
 import { makeCacheKey } from './utils/cacheKey';
 

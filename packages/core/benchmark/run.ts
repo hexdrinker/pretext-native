@@ -1,5 +1,5 @@
 /**
- * Performance benchmark for @pretext-native/core
+ * Performance benchmark for @hexdrinker/pretext-native-core
  *
  * Usage: npx ts-node benchmark/run.ts
  */
@@ -67,7 +67,7 @@ function formatResult(r: BenchResult): string {
 
 // --- Run benchmarks ---
 
-console.log('=== @pretext-native/core Benchmark ===\n');
+console.log('=== @hexdrinker/pretext-native-core Benchmark ===\n');
 
 const inputs: { name: string; input: TextMeasureInput }[] = [
   { name: 'Short text (13 chars, w=300)', input: { text: shortText(), width: 300, fontSize: 14 } },

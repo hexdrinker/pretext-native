@@ -1,6 +1,6 @@
 {
   "name": "pretext-native",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Pre-render text layout measurement for React Native — calculate line count, height, and line breaks before rendering",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -41,7 +41,7 @@
     "react-native": ">=0.71.0"
   },
   "dependencies": {
-    "@pretext-native/core": "workspace:^"
+    "@hexdrinker/pretext-native-core": "workspace:^"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",

@@ -20,4 +20,4 @@ export type {
   TextMeasureResult,
   FontMetrics,
   CacheStats,
-} from '@pretext-native/core';
+} from '@hexdrinker/pretext-native-core';

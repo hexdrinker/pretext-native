@@ -1,4 +1,4 @@
-import type { TextMeasureInput } from '@pretext-native/core';
+import type { TextMeasureInput } from '@hexdrinker/pretext-native-core';
 
 /**
  * Generate a deterministic cache key for a TextMeasureInput.

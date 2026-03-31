@@ -1,4 +1,4 @@
-import type { MeasureFunc, TextMeasureInput } from '@pretext-native/core';
+import type { MeasureFunc, TextMeasureInput } from '@hexdrinker/pretext-native-core';
 
 /**
  * Check if a codepoint is a wide character (CJK, fullwidth).

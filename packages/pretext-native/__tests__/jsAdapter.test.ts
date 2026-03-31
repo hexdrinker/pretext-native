@@ -1,5 +1,5 @@
 import { createJsAdapter } from '../src/jsAdapter';
-import type { TextMeasureInput } from '@pretext-native/core';
+import type { TextMeasureInput } from '@hexdrinker/pretext-native-core';
 
 describe('createJsAdapter', () => {
   const measure = createJsAdapter();

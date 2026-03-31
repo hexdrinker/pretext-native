@@ -4,7 +4,7 @@ import {
   type TextMeasureInput,
   type TextMeasureResult,
   type CacheStats,
-} from '@pretext-native/core';
+} from '@hexdrinker/pretext-native-core';
 import NativePretextNative from './NativePretextNative';
 import type { NativeCacheStats } from './NativePretextNative';
 import { createJsAdapter } from './jsAdapter';
