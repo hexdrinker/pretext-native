@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "pretext-native",
+    "description": "The title in the navbar"
+  },
+  "item.label.Docs": {
+    "message": "문서",
+    "description": "Navbar item with label Docs"
+  },
+  "item.label.Changelog": {
+    "message": "변경 내역",
+    "description": "Navbar item with label Changelog"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  },
+  "item.label.npm": {
+    "message": "npm",
+    "description": "Navbar item with label npm"
+  }
+}

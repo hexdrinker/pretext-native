@@ -3,13 +3,16 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "example"
+    "example",
+    "docs"
   ],
   "scripts": {
-    "build": "turbo run build --filter='*'",
-    "test": "turbo run test --filter='*'",
-    "typecheck": "turbo run typecheck --filter='*'",
-    "lint": "turbo run lint --filter='*'"
+    "build": "turbo run build --filter='!docs'",
+    "test": "turbo run test --filter='!docs'",
+    "typecheck": "turbo run typecheck --filter='!docs'",
+    "lint": "turbo run lint --filter='!docs'",
+    "docs:dev": "cd docs && yarn start",
+    "docs:build": "cd docs && yarn build"
   },
   "devDependencies": {
     "prettier": "^3.2.0",

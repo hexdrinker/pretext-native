@@ -1,9 +1,10 @@
-name: Deploy Changelog to GitHub Pages
+name: Deploy Docs to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
+      - docs/**
       - CHANGELOG.md
       - .github/workflows/pages.yml
 
@@ -22,162 +23,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate HTML from CHANGELOG
-        run: |
-          cat > dist/index.html << 'HTMLEOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>pretext-native — Changelog</title>
-            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-            <style>
-              :root {
-                --bg: #fafafa;
-                --fg: #1a1a1a;
-                --muted: #6b7280;
-                --accent: #3b82f6;
-                --border: #e5e7eb;
-                --card: #ffffff;
-                --code-bg: #f3f4f6;
-              }
-              @media (prefers-color-scheme: dark) {
-                :root {
-                  --bg: #111827;
-                  --fg: #f3f4f6;
-                  --muted: #9ca3af;
-                  --accent: #60a5fa;
-                  --border: #374151;
-                  --card: #1f2937;
-                  --code-bg: #374151;
-                }
-              }
-              * { margin: 0; padding: 0; box-sizing: border-box; }
-              body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: var(--bg);
-                color: var(--fg);
-                line-height: 1.7;
-              }
-              .header {
-                border-bottom: 1px solid var(--border);
-                padding: 24px 0;
-                text-align: center;
-              }
-              .header h1 {
-                font-size: 28px;
-                font-weight: 800;
-                letter-spacing: -0.5px;
-              }
-              .header h1 span { color: var(--accent); }
-              .header p {
-                color: var(--muted);
-                font-size: 14px;
-                margin-top: 6px;
-              }
-              .header nav {
-                margin-top: 12px;
-                display: flex;
-                gap: 16px;
-                justify-content: center;
-              }
-              .header nav a {
-                color: var(--accent);
-                text-decoration: none;
-                font-size: 13px;
-                font-weight: 500;
-              }
-              .header nav a:hover { text-decoration: underline; }
-              .container {
-                max-width: 720px;
-                margin: 0 auto;
-                padding: 40px 20px 80px;
-              }
-              #content h1 { display: none; }
-              #content h2 {
-                font-size: 22px;
-                font-weight: 700;
-                margin-top: 40px;
-                margin-bottom: 12px;
-                padding-bottom: 8px;
-                border-bottom: 2px solid var(--accent);
-              }
-              #content h3 {
-                font-size: 15px;
-                font-weight: 700;
-                color: var(--accent);
-                margin-top: 20px;
-                margin-bottom: 8px;
-              }
-              #content ul {
-                padding-left: 20px;
-                margin-bottom: 12px;
-              }
-              #content li {
-                font-size: 14px;
-                margin-bottom: 6px;
-                color: var(--fg);
-              }
-              #content code {
-                font-family: 'SF Mono', 'Fira Code', monospace;
-                font-size: 13px;
-                background: var(--code-bg);
-                padding: 2px 6px;
-                border-radius: 4px;
-              }
-              #content a {
-                color: var(--accent);
-                text-decoration: none;
-              }
-              #content a:hover { text-decoration: underline; }
-              .footer {
-                text-align: center;
-                padding: 24px;
-                color: var(--muted);
-                font-size: 12px;
-                border-top: 1px solid var(--border);
-              }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <h1>pretext<span>-native</span></h1>
-              <p>Pre-render text layout measurement for React Native</p>
-              <nav>
-                <a href="https://github.com/hexdrinker/pretext-native">GitHub</a>
-                <a href="https://www.npmjs.com/package/pretext-native">npm</a>
-                <a href="https://github.com/hexdrinker/pretext-native/blob/main/README.md">Docs</a>
-              </nav>
-            </div>
-            <div class="container">
-              <div id="content"></div>
-            </div>
-            <div class="footer">
-              Built from CHANGELOG.md · pretext-native by hexdrinker
-            </div>
-            <script id="changelog-source" type="text/markdown">CHANGELOG_PLACEHOLDER</script>
-            <script>
-              const md = document.getElementById('changelog-source').textContent;
-              document.getElementById('content').innerHTML = marked.parse(md);
-            </script>
-          </body>
-          </html>
-          HTMLEOF
+      - name: Enable Corepack
+        run: corepack enable
 
-          mkdir -p dist
-          # Embed CHANGELOG.md content into the HTML
-          CHANGELOG=$(cat CHANGELOG.md | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
-          python3 -c "
-          import sys
-          with open('dist/index.html', 'r') as f:
-              html = f.read()
-          with open('CHANGELOG.md', 'r') as f:
-              changelog = f.read().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-          html = html.replace('CHANGELOG_PLACEHOLDER', changelog)
-          with open('dist/index.html', 'w') as f:
-              f.write(html)
-          "
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Sync changelog
+        run: cp CHANGELOG.md docs/src/pages/changelog.md
+
+      - name: Build Docusaurus
+        run: cd docs && yarn build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -185,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: docs/build
 
   deploy:
     environment:
