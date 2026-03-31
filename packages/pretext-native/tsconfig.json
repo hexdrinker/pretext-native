@@ -3,7 +3,10 @@
   "compilerOptions": {
     "outDir": "lib",
     "rootDir": "src",
-    "jsx": "react"
+    "jsx": "react",
+    "paths": {
+      "react-native": ["../../example/node_modules/react-native"]
+    }
   },
   "include": ["src"],
   "exclude": ["lib", "__tests__", "node_modules"]
