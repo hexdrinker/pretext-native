@@ -147,6 +147,10 @@ JS 레벨과 네이티브 레벨의 LRU 캐시를 모두 초기화합니다.
 - Android API 21+
 - React Native 0.71+ (New Architecture 및 Legacy Bridge)
 
+## 기여하기
+
+기여를 환영합니다! Pull Request를 보내기 전에 [기여 가이드](./CONTRIBUTING.md)를 읽어주세요.
+
 ## 라이선스
 
 [MIT](./LICENSE)

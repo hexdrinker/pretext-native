@@ -147,6 +147,10 @@ Returns `true` if the native TurboModule is loaded. When `false`, all APIs fall 
 - Android API 21+
 - React Native 0.71+ (New Architecture & Legacy Bridge)
 
+## Contributing
+
+Contributions are welcome! Please read the [Contributing Guide](./CONTRIBUTING.md) before submitting a pull request.
+
 ## License
 
 [MIT](./LICENSE)
