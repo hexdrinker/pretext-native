@@ -75,10 +75,8 @@ export function computeLayout(
 
   // Step 2: Measure all tokens
   for (const token of tokens) {
-    if (token.type === 'word') {
+    if (token.type === 'word' || token.type === 'space') {
       token.width = cachedMeasure(token.text, input);
-    } else if (token.type === 'space') {
-      token.width = cachedMeasure(' ', input) * token.text.length;
     }
     // mandatory-break and zero-width-space have width = 0
   }
