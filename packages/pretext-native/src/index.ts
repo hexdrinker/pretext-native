@@ -6,6 +6,7 @@ export {
   clearCache,
   getCacheStats,
   isNativeAvailable,
+  isFontAvailable,
 } from './measureText';
 export type { CombinedCacheStats } from './measureText';
 

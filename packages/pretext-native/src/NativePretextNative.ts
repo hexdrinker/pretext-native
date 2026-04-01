@@ -45,6 +45,7 @@ export interface Spec extends TurboModule {
   ): NativeFontMetrics;
   clearCache(): void;
   getCacheStats(): NativeCacheStats;
+  isFontAvailable(fontFamily: string): boolean;
 }
 
 export default TurboModuleRegistry.get<Spec>('PretextNative');

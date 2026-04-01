@@ -132,6 +132,15 @@ export interface CombinedCacheStats {
   native: NativeCacheStats | null;
 }
 
+/**
+ * Check if a font family is available on the device.
+ * Returns false when native module is unavailable (e.g., in tests).
+ */
+export function isFontAvailable(fontFamily: string): boolean {
+  if (!isNativeAvailable()) return false;
+  return NativePretextNative!.isFontAvailable(fontFamily);
+}
+
 export function getCacheStats(): CombinedCacheStats {
   return {
     js: cache.getStats(),

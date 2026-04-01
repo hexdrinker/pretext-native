@@ -3,6 +3,7 @@ package com.pretextnative
 import android.graphics.Typeface
 import android.os.Build
 import android.text.TextPaint
+import android.util.Log
 import android.util.LruCache
 
 /**
@@ -49,6 +50,7 @@ class FontMetricsCache(maxSize: Int = 50) {
                 try {
                     Typeface.create(fontFamily, Typeface.NORMAL)
                 } catch (_: Exception) {
+                    Log.w("PretextNative", "Font '$fontFamily' not found, falling back to system font")
                     Typeface.DEFAULT
                 }
             } else {
@@ -62,6 +64,7 @@ class FontMetricsCache(maxSize: Int = 50) {
                 try {
                     Typeface.create(fontFamily, style)
                 } catch (_: Exception) {
+                    Log.w("PretextNative", "Font '$fontFamily' not found, falling back to system font")
                     Typeface.create(Typeface.DEFAULT, style)
                 }
             } else {

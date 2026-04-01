@@ -77,6 +77,16 @@ class PretextNativeModule(reactContext: ReactApplicationContext) :
         return result
     }
 
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun isFontAvailable(fontFamily: String): Boolean {
+        return try {
+            val typeface = android.graphics.Typeface.create(fontFamily, android.graphics.Typeface.NORMAL)
+            typeface != android.graphics.Typeface.DEFAULT || fontFamily == "sans-serif"
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     companion object {
         const val NAME = "PretextNative"
     }

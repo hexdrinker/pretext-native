@@ -43,6 +43,7 @@ static UIFont *getCachedFont(NSString *fontFamily, NSString *fontWeight, CGFloat
         if (fontFamily && fontFamily.length > 0) {
             font = [UIFont fontWithName:fontFamily size:fontSize];
             if (!font) {
+                RCTLogWarn(@"[PretextNative] Font '%@' not found, falling back to system font", fontFamily);
                 font = [UIFont systemFontOfSize:fontSize weight:weight];
             }
         } else {
@@ -308,6 +309,11 @@ static NSDictionary *dictFromTextInput(JS::NativePretextNative::TextMeasureNativ
     }
 }
 
+- (BOOL)isFontAvailable:(NSString *)fontFamily {
+    UIFont *font = [UIFont fontWithName:fontFamily size:12];
+    return font != nil;
+}
+
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params {
     return std::make_shared<facebook::react::NativePretextNativeSpecJSI>(params);
@@ -378,6 +384,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getCacheStats) {
             @"hitRate": @(0),
         };
     }
+}
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(isFontAvailable:(NSString *)fontFamily) {
+    UIFont *font = [UIFont fontWithName:fontFamily size:12];
+    return @(font != nil);
 }
 
 #endif
