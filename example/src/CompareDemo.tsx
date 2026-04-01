@@ -98,33 +98,35 @@ export function CompareDemo() {
   const textWidth = bubbleWidth - BUBBLE_PADDING;
   const listRef = useRef<FlatList>(null);
 
-  const getItemLayout = useCallback(
-    (_data: typeof MESSAGES | null, index: number) => {
-      let offset = 0;
-      for (let i = 0; i < index; i++) {
-        const msg = MESSAGES[i];
-        const result = measureTextSync({
-          text: msg.body,
-          width: textWidth,
-          fontSize: FONT_SIZE,
-          lineHeight: LINE_HEIGHT,
-        });
-        offset += result.height + SENDER_HEIGHT + BUBBLE_PADDING + ITEM_MARGIN;
-      }
-      const msg = MESSAGES[index];
+  // Pre-compute all item heights and cumulative offsets once — O(n) total, O(1) per lookup
+  const layoutData = React.useMemo(() => {
+    const lengths: number[] = [];
+    const offsets: number[] = [];
+    let cumulative = 0;
+
+    for (let i = 0; i < MESSAGES.length; i++) {
       const result = measureTextSync({
-        text: msg.body,
+        text: MESSAGES[i].body,
         width: textWidth,
         fontSize: FONT_SIZE,
         lineHeight: LINE_HEIGHT,
       });
-      return {
-        length: result.height + SENDER_HEIGHT + BUBBLE_PADDING + ITEM_MARGIN,
-        offset,
-        index,
-      };
-    },
-    [textWidth],
+      const length = result.height + SENDER_HEIGHT + BUBBLE_PADDING + ITEM_MARGIN;
+      lengths.push(length);
+      offsets.push(cumulative);
+      cumulative += length;
+    }
+
+    return { lengths, offsets };
+  }, [textWidth]);
+
+  const getItemLayout = useCallback(
+    (_data: typeof MESSAGES | null, index: number) => ({
+      length: layoutData.lengths[index],
+      offset: layoutData.offsets[index],
+      index,
+    }),
+    [layoutData],
   );
 
   const scrollTo = (index: number) => {
