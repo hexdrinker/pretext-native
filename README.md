@@ -60,6 +60,17 @@ pretext-native:
 
 Warm cache = **2–5M ops/s** — fast enough to measure thousands of items per frame at 60fps.
 
+<details>
+<summary>How to reproduce</summary>
+
+```bash
+cd packages/core && npx ts-node benchmark/run.ts
+```
+
+Runs the JS layout engine benchmark. Results vary by hardware — numbers above were measured on Apple M-series. Native measurement (iOS CoreText / Android StaticLayout) bypasses JS tokenization entirely and is faster.
+
+</details>
+
 ### Feature Comparison
 
 | | `onLayout` | `react-native-text-size` | **pretext-native** |
@@ -73,6 +84,17 @@ Warm cache = **2–5M ops/s** — fast enough to measure thousands of items per 
 | TurboModule (New Arch) | N/A | No | **Yes** |
 | Package size | 0 (built-in) | 167KB | **13KB (core) + 120KB** |
 | Runtime dependencies | N/A | 0 | **0** |
+
+<details>
+<summary>How we verified</summary>
+
+- **Package size**: `npm pack` output for each package
+- **react-native-text-size**: `npm info react-native-text-size` and [GitHub README](https://github.com/aMarCruz/react-native-text-size) for API/feature verification
+- **Benchmark**: `cd packages/core && npx ts-node benchmark/run.ts`
+
+All claims are reproducible. If you find any inaccuracy, please [open an issue](https://github.com/hexdrinker/pretext-native/issues).
+
+</details>
 
 ## Install
 

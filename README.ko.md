@@ -60,6 +60,17 @@ pretext-native:
 
 캐시 워밍 후 **2–5M ops/s** — 60fps 기준 한 프레임 안에 수천 개 아이템을 측정할 수 있는 속도입니다.
 
+<details>
+<summary>재현 방법</summary>
+
+```bash
+cd packages/core && npx ts-node benchmark/run.ts
+```
+
+JS 레이아웃 엔진 벤치마크를 실행합니다. 하드웨어에 따라 결과가 달라지며, 위 수치는 Apple M 시리즈에서 측정되었습니다. 네이티브 측정(iOS CoreText / Android StaticLayout)은 JS 토크나이징을 건너뛰므로 더 빠릅니다.
+
+</details>
+
 ### 기능 비교
 
 | | `onLayout` | `react-native-text-size` | **pretext-native** |
@@ -73,6 +84,17 @@ pretext-native:
 | TurboModule (New Arch) | 해당 없음 | X | **O** |
 | 패키지 크기 | 0 (내장) | 167KB | **13KB (core) + 120KB** |
 | 런타임 의존성 | 해당 없음 | 0 | **0** |
+
+<details>
+<summary>검증 방법</summary>
+
+- **패키지 크기**: 각 패키지의 `npm pack` 출력
+- **react-native-text-size**: `npm info react-native-text-size` 및 [GitHub README](https://github.com/aMarCruz/react-native-text-size)에서 API/기능 확인
+- **벤치마크**: `cd packages/core && npx ts-node benchmark/run.ts`
+
+모든 수치는 재현 가능합니다. 부정확한 내용이 있다면 [이슈를 열어주세요](https://github.com/hexdrinker/pretext-native/issues).
+
+</details>
 
 ## 설치
 
