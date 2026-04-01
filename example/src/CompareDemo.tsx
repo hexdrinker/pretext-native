@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -34,9 +34,17 @@ const ITEM_MARGIN = 8;
 
 const JUMP_TARGETS = [0, 50, 100, 150, 199];
 
-function OnLayoutItem({ item, maxWidth }: { item: (typeof MESSAGES)[0]; maxWidth: number }) {
-  const [measured, setMeasured] = useState(false);
+function OnLayoutItem({
+  item,
+  maxWidth,
+  onShift,
+}: {
+  item: (typeof MESSAGES)[0];
+  maxWidth: number;
+  onShift?: () => void;
+}) {
   const isMe = item.sender === 'Bob';
+  const measuredRef = useRef(false);
 
   return (
     <View
@@ -44,14 +52,18 @@ function OnLayoutItem({ item, maxWidth }: { item: (typeof MESSAGES)[0]; maxWidth
         styles.bubble,
         { maxWidth },
         isMe ? styles.bubbleRight : styles.bubbleLeft,
-        !measured && styles.bubbleUnmeasured,
       ]}
     >
-      <Text style={styles.sender}>#{item.id} · {item.sender}</Text>
+      <Text style={styles.sender}>
+        #{item.id} · {item.sender}
+      </Text>
       <Text
         style={[styles.body, isMe && styles.bodyRight]}
         onLayout={() => {
-          if (!measured) setMeasured(true);
+          if (!measuredRef.current) {
+            measuredRef.current = true;
+            onShift?.();
+          }
         }}
       >
         {item.body}
@@ -64,10 +76,12 @@ function PretextItem({
   item,
   maxWidth,
   textWidth,
+  showDetail,
 }: {
   item: (typeof MESSAGES)[0];
   maxWidth: number;
   textWidth: number;
+  showDetail: boolean;
 }) {
   const isMe = item.sender === 'Bob';
   const result = measureTextSync({
@@ -77,6 +91,8 @@ function PretextItem({
     lineHeight: LINE_HEIGHT,
   });
 
+  const [actual, setActual] = useState<number | null>(null);
+
   return (
     <View
       style={[
@@ -85,21 +101,62 @@ function PretextItem({
         isMe ? styles.bubbleRight : styles.bubbleLeft,
       ]}
     >
-      <Text style={styles.sender}>#{item.id} · {item.sender}</Text>
-      <Text style={[styles.body, isMe && styles.bodyRight]}>{item.body}</Text>
+      <Text style={styles.sender}>
+        #{item.id} · {item.sender}
+      </Text>
+      <Text
+        style={[styles.body, isMe && styles.bodyRight]}
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          if (actual === null) setActual(h);
+        }}
+      >
+        {item.body}
+      </Text>
+      {showDetail && actual !== null && (
+        <View style={styles.detailRow}>
+          <Text style={[styles.detailText, isMe && styles.detailTextRight]}>
+            predicted: {result.height}px ({result.lineCount}L)
+          </Text>
+          <View
+            style={[
+              styles.detailBadge,
+              {
+                backgroundColor:
+                  result.height === actual ? '#d1fae5' : '#dbeafe',
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.detailBadgeText,
+                {
+                  color: result.height === actual ? '#065f46' : '#1e40af',
+                },
+              ]}
+            >
+              {result.height === actual
+                ? 'EXACT'
+                : `${Math.abs(result.height - actual).toFixed(1)}px off`}
+            </Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
 
 export function CompareDemo() {
   const [mode, setMode] = useState<'pretext' | 'onLayout'>('pretext');
+  const [showDetail, setShowDetail] = useState(true);
   const { width: screenWidth } = useWindowDimensions();
   const bubbleWidth = screenWidth * 0.72;
   const textWidth = bubbleWidth - BUBBLE_PADDING;
   const listRef = useRef<FlatList>(null);
 
-  // Pre-compute all item heights and cumulative offsets once — O(n) total, O(1) per lookup
-  const layoutData = React.useMemo(() => {
+  // Pre-compute all item heights and cumulative offsets once
+  const { layoutData, computeTimeMs } = useMemo(() => {
+    const start = performance.now();
     const lengths: number[] = [];
     const offsets: number[] = [];
     let cumulative = 0;
@@ -111,13 +168,18 @@ export function CompareDemo() {
         fontSize: FONT_SIZE,
         lineHeight: LINE_HEIGHT,
       });
-      const length = result.height + SENDER_HEIGHT + BUBBLE_PADDING + ITEM_MARGIN;
+      const length =
+        result.height + SENDER_HEIGHT + BUBBLE_PADDING + ITEM_MARGIN;
       lengths.push(length);
       offsets.push(cumulative);
       cumulative += length;
     }
 
-    return { lengths, offsets };
+    const elapsed = performance.now() - start;
+    return {
+      layoutData: { lengths, offsets },
+      computeTimeMs: Math.round(elapsed * 100) / 100,
+    };
   }, [textWidth]);
 
   const getItemLayout = useCallback(
@@ -142,44 +204,99 @@ export function CompareDemo() {
 
   const renderPretextItem = useCallback(
     ({ item }: { item: (typeof MESSAGES)[0] }) => (
-      <PretextItem item={item} maxWidth={bubbleWidth} textWidth={textWidth} />
+      <PretextItem
+        item={item}
+        maxWidth={bubbleWidth}
+        textWidth={textWidth}
+        showDetail={showDetail}
+      />
     ),
-    [bubbleWidth, textWidth],
+    [bubbleWidth, textWidth, showDetail],
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.heading}>Layout Jump Comparison</Text>
-        <Text style={styles.desc}>
-          {mode === 'onLayout'
-            ? 'onLayout: No getItemLayout. Try jumping — position will be inaccurate and you\'ll see flicker.'
-            : 'pretext-native: getItemLayout enabled. Jumps land at the exact position instantly.'}
-        </Text>
 
         <View style={styles.toggleRow}>
           <Pressable
-            style={[styles.toggleBtn, mode === 'pretext' && styles.toggleActive]}
+            style={[
+              styles.toggleBtn,
+              mode === 'pretext' && styles.toggleActive,
+            ]}
             onPress={() => setMode('pretext')}
           >
-            <Text style={[styles.toggleText, mode === 'pretext' && styles.toggleTextActive]}>
+            <Text
+              style={[
+                styles.toggleText,
+                mode === 'pretext' && styles.toggleTextActive,
+              ]}
+            >
               pretext-native
             </Text>
           </Pressable>
           <Pressable
-            style={[styles.toggleBtn, mode === 'onLayout' && styles.toggleWarn]}
+            style={[
+              styles.toggleBtn,
+              mode === 'onLayout' && styles.toggleWarn,
+            ]}
             onPress={() => setMode('onLayout')}
           >
-            <Text style={[styles.toggleText, mode === 'onLayout' && styles.toggleTextActive]}>
+            <Text
+              style={[
+                styles.toggleText,
+                mode === 'onLayout' && styles.toggleTextActive,
+              ]}
+            >
               onLayout
             </Text>
           </Pressable>
         </View>
 
+        {mode === 'pretext' && (
+          <View style={styles.infoRow}>
+            <View style={styles.timingBadge}>
+              <Text style={styles.timingText}>
+                {MESSAGES.length} items measured in {computeTimeMs}ms
+              </Text>
+            </View>
+            <Pressable
+              style={[
+                styles.detailToggle,
+                showDetail && styles.detailToggleOn,
+              ]}
+              onPress={() => setShowDetail((v) => !v)}
+            >
+              <Text
+                style={[
+                  styles.detailToggleText,
+                  showDetail && styles.detailToggleTextOn,
+                ]}
+              >
+                Detail
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
+        {mode === 'onLayout' && (
+          <Text style={styles.warnText}>
+            No getItemLayout. Jumps will be inaccurate and may flicker.
+          </Text>
+        )}
+
         <View style={styles.jumpRow}>
           <Text style={styles.jumpLabel}>Jump to:</Text>
           {JUMP_TARGETS.map((idx) => (
-            <Pressable key={idx} style={styles.jumpBtn} onPress={() => scrollTo(idx)}>
+            <Pressable
+              key={idx}
+              style={({ pressed }) => [
+                styles.jumpBtn,
+                pressed && styles.jumpBtnPressed,
+              ]}
+              onPress={() => scrollTo(idx)}
+            >
               <Text style={styles.jumpBtnText}>#{idx}</Text>
             </Pressable>
           ))}
@@ -207,7 +324,6 @@ export function CompareDemo() {
           style={styles.list}
           initialNumToRender={10}
           onScrollToIndexFailed={(info) => {
-            // Without getItemLayout, FlatList can't scroll to unmeasured items
             const offset = info.averageItemLength * info.index;
             listRef.current?.scrollToOffset({ offset, animated: true });
           }}
@@ -221,7 +337,6 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { gap: 8, marginBottom: 8 },
   heading: { fontSize: 16, fontWeight: '700' },
-  desc: { fontSize: 13, color: '#666', minHeight: 36 },
   toggleRow: {
     flexDirection: 'row',
     gap: 8,
@@ -237,6 +352,40 @@ const styles = StyleSheet.create({
   toggleWarn: { backgroundColor: '#f59e0b' },
   toggleText: { fontSize: 13, fontWeight: '700', color: '#6b7280' },
   toggleTextActive: { color: '#fff' },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  timingBadge: {
+    backgroundColor: '#eff6ff',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  timingText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#3b82f6',
+    fontFamily: 'monospace',
+  },
+  detailToggle: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+  },
+  detailToggleOn: { backgroundColor: '#3b82f6' },
+  detailToggleText: { fontSize: 11, fontWeight: '700', color: '#6b7280' },
+  detailToggleTextOn: { color: '#fff' },
+  warnText: {
+    fontSize: 12,
+    color: '#92400e',
+    backgroundColor: '#fef3c7',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
   jumpRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -253,6 +402,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#1f2937',
   },
+  jumpBtnPressed: {
+    opacity: 0.6,
+    transform: [{ scale: 0.93 }],
+  },
   jumpBtnText: {
     fontSize: 12,
     fontWeight: '700',
@@ -264,12 +417,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     marginBottom: ITEM_MARGIN,
-  },
-  bubbleUnmeasured: {
-    opacity: 0.5,
-    borderWidth: 2,
-    borderColor: '#f59e0b',
-    borderStyle: 'dashed',
   },
   bubbleLeft: {
     backgroundColor: '#e5e7eb',
@@ -293,5 +440,32 @@ const styles = StyleSheet.create({
   },
   bodyRight: {
     color: '#fff',
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 6,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.06)',
+  },
+  detailText: {
+    fontSize: 10,
+    fontFamily: 'monospace',
+    color: '#6b7280',
+  },
+  detailTextRight: {
+    color: 'rgba(255,255,255,0.8)',
+  },
+  detailBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 6,
+  },
+  detailBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    fontFamily: 'monospace',
   },
 });

@@ -8,53 +8,32 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { BasicMeasureDemo } from './BasicMeasureDemo';
-import { ChatListDemo } from './ChatListDemo';
-import { TruncationDemo } from './TruncationDemo';
-import { BatchDemo } from './BatchDemo';
-import { AccordionDemo } from './AccordionDemo';
-import { MasonryDemo } from './MasonryDemo';
-import { BubbleDemo } from './BubbleDemo';
-import { ShowMoreDemo } from './ShowMoreDemo';
-import { FontCompareDemo } from './FontCompareDemo';
-import { DynamicWidthDemo } from './DynamicWidthDemo';
-import { PerformanceDemo } from './PerformanceDemo';
-import { ObstacleTextDemo } from './ObstacleTextDemo';
 import { CompareDemo } from './CompareDemo';
+import { BasicMeasureDemo } from './BasicMeasureDemo';
+import { DynamicWidthDemo } from './DynamicWidthDemo';
+import { SpeedDemo } from './SpeedDemo';
+import { ShowMoreDemo } from './ShowMoreDemo';
+import { ObstacleTextDemo } from './ObstacleTextDemo';
 
 type DemoKey =
   | 'compare'
   | 'basic'
-  | 'bubbles'
-  | 'chat'
-  | 'accordion'
-  | 'showmore'
-  | 'masonry'
-  | 'truncation'
-  | 'fonts'
   | 'dynamic'
-  | 'batch'
-  | 'perf'
+  | 'speed'
+  | 'showmore'
   | 'obstacle';
 
 const DEMOS: { key: DemoKey; label: string }[] = [
   { key: 'compare', label: 'Compare' },
   { key: 'basic', label: 'Basic' },
-  { key: 'bubbles', label: 'Bubbles' },
-  { key: 'chat', label: 'Chat List' },
-  { key: 'accordion', label: 'Accordion' },
-  { key: 'showmore', label: 'Show More' },
-  { key: 'masonry', label: 'Masonry' },
-  { key: 'truncation', label: 'Truncation' },
-  { key: 'fonts', label: 'Fonts' },
   { key: 'dynamic', label: 'Dynamic' },
-  { key: 'batch', label: 'Batch' },
+  { key: 'speed', label: 'Speed' },
+  { key: 'showmore', label: 'Show More' },
   { key: 'obstacle', label: 'Obstacle' },
-  { key: 'perf', label: 'Benchmark' },
 ];
 
 export default function App() {
-  const [active, setActive] = useState<DemoKey>('basic');
+  const [active, setActive] = useState<DemoKey>('compare');
 
   return (
     <SafeAreaView style={styles.root}>
@@ -84,26 +63,21 @@ export default function App() {
         ))}
       </ScrollView>
 
-      {/* Demos with their own scroll (FlatList/ScrollView) get a plain View wrapper */}
-      {(active === 'compare' || active === 'chat' || active === 'bubbles' || active === 'fonts' || active === 'showmore' || active === 'perf' || active === 'obstacle') ? (
+      {active === 'basic' || active === 'dynamic' ? (
+        <ScrollView
+          style={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          {active === 'basic' && <BasicMeasureDemo />}
+          {active === 'dynamic' && <DynamicWidthDemo />}
+        </ScrollView>
+      ) : (
         <View style={styles.content}>
           {active === 'compare' && <CompareDemo />}
-          {active === 'bubbles' && <BubbleDemo />}
-          {active === 'chat' && <ChatListDemo />}
+          {active === 'speed' && <SpeedDemo />}
           {active === 'showmore' && <ShowMoreDemo />}
-          {active === 'fonts' && <FontCompareDemo />}
-          {active === 'perf' && <PerformanceDemo />}
           {active === 'obstacle' && <ObstacleTextDemo />}
         </View>
-      ) : (
-        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-          {active === 'basic' && <BasicMeasureDemo />}
-          {active === 'accordion' && <AccordionDemo />}
-          {active === 'masonry' && <MasonryDemo />}
-          {active === 'truncation' && <TruncationDemo />}
-          {active === 'dynamic' && <DynamicWidthDemo />}
-          {active === 'batch' && <BatchDemo />}
-        </ScrollView>
       )}
     </SafeAreaView>
   );
