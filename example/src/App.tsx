@@ -20,8 +20,10 @@ import { FontCompareDemo } from './FontCompareDemo';
 import { DynamicWidthDemo } from './DynamicWidthDemo';
 import { PerformanceDemo } from './PerformanceDemo';
 import { ObstacleTextDemo } from './ObstacleTextDemo';
+import { CompareDemo } from './CompareDemo';
 
 type DemoKey =
+  | 'compare'
   | 'basic'
   | 'bubbles'
   | 'chat'
@@ -36,6 +38,7 @@ type DemoKey =
   | 'obstacle';
 
 const DEMOS: { key: DemoKey; label: string }[] = [
+  { key: 'compare', label: 'Compare' },
   { key: 'basic', label: 'Basic' },
   { key: 'bubbles', label: 'Bubbles' },
   { key: 'chat', label: 'Chat List' },
@@ -82,8 +85,9 @@ export default function App() {
       </ScrollView>
 
       {/* Demos with their own scroll (FlatList/ScrollView) get a plain View wrapper */}
-      {(active === 'chat' || active === 'bubbles' || active === 'fonts' || active === 'showmore' || active === 'perf' || active === 'obstacle') ? (
+      {(active === 'compare' || active === 'chat' || active === 'bubbles' || active === 'fonts' || active === 'showmore' || active === 'perf' || active === 'obstacle') ? (
         <View style={styles.content}>
+          {active === 'compare' && <CompareDemo />}
           {active === 'bubbles' && <BubbleDemo />}
           {active === 'chat' && <ChatListDemo />}
           {active === 'showmore' && <ShowMoreDemo />}
