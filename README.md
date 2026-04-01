@@ -33,6 +33,47 @@ pretext-native talks directly to the same native text engine React Native uses i
 - **JS Fallback**: Heuristic character-width estimation (for testing/SSR only)
 - **Cache**: Two-tier LRU (word-level + layout-level). 95%+ hit rate on real-world data. Warm cache runs at 2–5M ops/s.
 
+## Complements New Architecture
+
+Fabric and JSI eliminated bridge delays, but text height is still only known after rendering. pretext-native fills this gap by calculating height before render — enabling accurate `getItemLayout`, precise `scrollToIndex`, and flicker-free initial renders.
+
+### Render Cycle Comparison
+
+```
+Traditional (onLayout):
+  Render (height unknown) → onLayout fires → Re-render with correct height
+  = 2 render passes, visible layout jump
+
+pretext-native:
+  Measure → Render (height known)
+  = 1 render pass, no jump
+```
+
+### Benchmark
+
+| Scenario | Cold | Warm (cached) |
+|----------|------|---------------|
+| Short text (13 chars) | 815K ops/s | 5.8M ops/s |
+| Medium text (180 chars) | 112K ops/s | 2.3M ops/s |
+| Long text (1.2K chars) | 17K ops/s | 503K ops/s |
+| CJK text (120 chars) | 159K ops/s | 2.7M ops/s |
+
+Warm cache = **2–5M ops/s** — fast enough to measure thousands of items per frame at 60fps.
+
+### Feature Comparison
+
+| | `onLayout` | `react-native-text-size` | **pretext-native** |
+|---|---|---|---|
+| Pre-render measurement | No | Yes | **Yes** |
+| Synchronous API (JSI) | No | No | **Yes** |
+| `getItemLayout` support | No | Manual | **Built-in** |
+| Built-in cache | N/A | No | **Yes (95%+ hit rate)** |
+| `allowFontScaling` | N/A | No | **Yes** |
+| Custom font validation | N/A | No | **Yes (`isFontAvailable`)** |
+| TurboModule (New Arch) | N/A | No | **Yes** |
+| Package size | 0 (built-in) | 167KB | **13KB (core) + 120KB** |
+| Runtime dependencies | N/A | 0 | **0** |
+
 ## Install
 
 ```bash
