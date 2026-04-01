@@ -55,6 +55,22 @@ pretext-native uses a two-tier LRU cache:
 - **Warm** (cache hit): ~0.001ms per text (2–5M ops/s)
 - **Hit rate**: 95%+ on real-world chat/feed data
 
+## Complements New Architecture
+
+Fabric and JSI eliminated bridge delays, but text height is still only known after rendering. pretext-native fills this gap by calculating height before render — enabling accurate `getItemLayout`, precise `scrollToIndex`, and flicker-free initial renders.
+
+### Render Cycle Comparison
+
+```
+Traditional (onLayout):
+  Render (height unknown) → onLayout fires → Re-render with correct height
+  = 2 render passes, visible layout jump
+
+pretext-native:
+  Measure → Render (height known)
+  = 1 render pass, no jump
+```
+
 ## Architecture
 
 ```

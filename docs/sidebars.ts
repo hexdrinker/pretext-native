@@ -4,6 +4,7 @@ const sidebars: SidebarsConfig = {
   docsSidebar: [
     'getting-started',
     'how-it-works',
+    'benchmarks',
     {
       type: 'category',
       label: 'API Reference',
@@ -14,6 +15,7 @@ const sidebars: SidebarsConfig = {
       label: 'Guides',
       items: ['guides/flatlist', 'guides/chat', 'guides/truncation'],
     },
+    'limitations',
     'contributing',
   ],
 };
