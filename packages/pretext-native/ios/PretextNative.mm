@@ -309,9 +309,9 @@ static NSDictionary *dictFromTextInput(JS::NativePretextNative::TextMeasureNativ
     }
 }
 
-- (BOOL)isFontAvailable:(NSString *)fontFamily {
+- (NSNumber *)isFontAvailable:(NSString *)fontFamily {
     UIFont *font = [UIFont fontWithName:fontFamily size:12];
-    return font != nil;
+    return @(font != nil);
 }
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
