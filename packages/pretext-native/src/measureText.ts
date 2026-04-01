@@ -9,6 +9,33 @@ import NativePretextNative from './NativePretextNative';
 import type { NativeCacheStats } from './NativePretextNative';
 import { createJsAdapter } from './jsAdapter';
 
+function getFontScale(): number {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { PixelRatio } = require('react-native');
+    return PixelRatio.getFontScale();
+  } catch {
+    return 1;
+  }
+}
+
+/**
+ * Apply system font scaling to measurement input.
+ * When allowFontScaling is true (default), fontSize and lineHeight
+ * are multiplied by the system font scale to match React Native's
+ * Text rendering behavior.
+ */
+function applyFontScaling(input: TextMeasureInput): TextMeasureInput {
+  if (input.allowFontScaling === false) return input;
+  const fontScale = getFontScale();
+  if (fontScale === 1) return input;
+  return {
+    ...input,
+    fontSize: input.fontSize * fontScale,
+    lineHeight: input.lineHeight ? input.lineHeight * fontScale : undefined,
+  };
+}
+
 /** Shared layout cache instance */
 const cache = new LayoutCache();
 
@@ -38,11 +65,12 @@ export function isNativeAvailable(): boolean {
  * Ideal for FlatList's getItemLayout where synchronous access is required.
  */
 export function measureTextSync(input: TextMeasureInput): TextMeasureResult {
+  const scaled = applyFontScaling(input);
   if (isNativeAvailable()) {
-    return NativePretextNative!.measureTextSync(input);
+    return NativePretextNative!.measureTextSync(scaled);
   }
   // Fallback: use pure-JS engine with heuristic adapter
-  return computeLayout(input, getJsAdapter(), cache);
+  return computeLayout(scaled, getJsAdapter(), cache);
 }
 
 /**
@@ -54,10 +82,11 @@ export function measureTextSync(input: TextMeasureInput): TextMeasureResult {
  * Useful for background pre-warming of layout caches.
  */
 export async function measureText(input: TextMeasureInput): Promise<TextMeasureResult> {
+  const scaled = applyFontScaling(input);
   if (isNativeAvailable()) {
-    return NativePretextNative!.measureText(input);
+    return NativePretextNative!.measureText(scaled);
   }
-  return computeLayout(input, getJsAdapter(), cache);
+  return computeLayout(scaled, getJsAdapter(), cache);
 }
 
 /**
@@ -69,11 +98,12 @@ export async function measureText(input: TextMeasureInput): Promise<TextMeasureR
 export async function measureTextBatch(
   inputs: TextMeasureInput[]
 ): Promise<TextMeasureResult[]> {
+  const scaledInputs = inputs.map(applyFontScaling);
   if (isNativeAvailable()) {
-    return NativePretextNative!.measureTextBatch(inputs);
+    return NativePretextNative!.measureTextBatch(scaledInputs);
   }
   const adapter = getJsAdapter();
-  return inputs.map((input) => computeLayout(input, adapter, cache));
+  return scaledInputs.map((input) => computeLayout(input, adapter, cache));
 }
 
 /**

@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Switch,
+  PixelRatio,
+} from 'react-native';
 import { useTextLayout } from 'pretext-native';
 
 const DEFAULT_TEXT =
   'React Native에서 텍스트의 줄바꿈과 높이를 렌더링 전에 계산할 수 있습니다. This works for English too!';
 
+const FONT_SIZE = 15;
+const LINE_HEIGHT = 22;
+
 export function BasicMeasureDemo() {
   const [text, setText] = useState(DEFAULT_TEXT);
   const [width] = useState(300);
+  const [allowFontScaling, setAllowFontScaling] = useState(true);
+
+  const fontScale = PixelRatio.getFontScale();
 
   const { height, lineCount, isTruncated, result } = useTextLayout({
     text,
     width,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: FONT_SIZE,
+    lineHeight: LINE_HEIGHT,
+    allowFontScaling,
   });
 
   return (
@@ -28,12 +42,28 @@ export function BasicMeasureDemo() {
         placeholder="Type text to measure..."
       />
 
+      <View style={styles.scaleRow}>
+        <View style={styles.scaleInfo}>
+          <Text style={styles.label}>allowFontScaling</Text>
+          <Text style={styles.scaleValue}>
+            fontScale: {fontScale.toFixed(2)}
+          </Text>
+        </View>
+        <Switch value={allowFontScaling} onValueChange={setAllowFontScaling} />
+      </View>
+
       <View style={styles.resultBox}>
         <Text style={styles.label}>Computed height: {height}px</Text>
         <Text style={styles.label}>Line count: {lineCount}</Text>
         <Text style={styles.label}>
           Truncated: {isTruncated ? 'Yes' : 'No'}
         </Text>
+        {allowFontScaling && fontScale !== 1 && (
+          <Text style={styles.scaleNote}>
+            fontSize: {FONT_SIZE} × {fontScale.toFixed(2)} ={' '}
+            {(FONT_SIZE * fontScale).toFixed(1)}
+          </Text>
+        )}
       </View>
 
       {result && (
@@ -48,7 +78,12 @@ export function BasicMeasureDemo() {
       )}
 
       <View style={[styles.preview, { width }]}>
-        <Text style={{ fontSize: 15, lineHeight: 22 }}>{text}</Text>
+        <Text
+          style={{ fontSize: FONT_SIZE, lineHeight: LINE_HEIGHT }}
+          allowFontScaling={allowFontScaling}
+        >
+          {text}
+        </Text>
       </View>
     </View>
   );
@@ -66,6 +101,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     minHeight: 60,
   },
+  scaleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 8,
+  },
+  scaleInfo: { gap: 2 },
+  scaleValue: { fontSize: 12, color: '#6b7280', fontFamily: 'monospace' },
   resultBox: {
     backgroundColor: '#fff',
     padding: 12,
@@ -80,6 +125,12 @@ const styles = StyleSheet.create({
   },
   label: { fontSize: 13, fontWeight: '600' },
   lineText: { fontSize: 12, fontFamily: 'monospace', color: '#555' },
+  scaleNote: {
+    fontSize: 12,
+    color: '#3b82f6',
+    fontFamily: 'monospace',
+    marginTop: 4,
+  },
   preview: {
     backgroundColor: '#fff',
     padding: 12,

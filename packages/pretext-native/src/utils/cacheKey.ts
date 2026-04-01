@@ -14,5 +14,6 @@ export function makeCacheKey(input: TextMeasureInput): string {
     input.lineHeight ?? '',
     input.letterSpacing ?? '',
     input.maxLines ?? '',
+    input.allowFontScaling ?? '',
   ].join('\0');
 }

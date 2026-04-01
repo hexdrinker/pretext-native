@@ -54,6 +54,7 @@ export function useTextLayout(options: UseTextLayoutOptions): UseTextLayoutResul
       options.lineHeight,
       options.letterSpacing,
       options.maxLines,
+      options.allowFontScaling,
     ]
   );
 

@@ -8,6 +8,7 @@ export interface TextMeasureInput {
   lineHeight?: number;
   letterSpacing?: number;
   maxLines?: number;
+  allowFontScaling?: boolean;
 }
 
 /** Result of text layout measurement */
