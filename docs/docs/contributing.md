@@ -24,7 +24,7 @@ yarn test
 |---|---|
 | `packages/core` | Platform-independent layout engine |
 | `packages/pretext-native` | React Native bindings (iOS/Android native modules) |
-| `example` | Demo app with 11 screens |
+| `example` | Demo app with 6 screens |
 | `docs` | This documentation site |
 
 ## Commit Convention

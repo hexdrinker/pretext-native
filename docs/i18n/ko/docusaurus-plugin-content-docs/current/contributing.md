@@ -24,7 +24,7 @@ yarn test
 |---|---|
 | `packages/core` | 플랫폼 독립 레이아웃 엔진 |
 | `packages/pretext-native` | React Native 바인딩 (iOS/Android 네이티브 모듈) |
-| `example` | 11개 화면의 데모 앱 |
+| `example` | 6개 화면의 데모 앱 |
 | `docs` | 이 문서 사이트 |
 
 ## 커밋 규칙

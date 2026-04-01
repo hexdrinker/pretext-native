@@ -111,6 +111,7 @@ interface TextMeasureInput {
   lineHeight?: number;
   letterSpacing?: number;
   maxLines?: number;
+  allowFontScaling?: boolean;
 }
 ```
 
