@@ -55,7 +55,7 @@ const { height, lineCount, isTruncated } = useTextLayout({
 })
 ```
 
-[전체 설정 가이드 →](https://hexdrinker.github.io/pretext-native/ko/getting-started)
+[전체 설정 가이드 →](https://hexdrinker.github.io/pretext-native/ko/docs/getting-started)
 
 ## 기능 비교
 
@@ -80,7 +80,7 @@ const { height, lineCount, isTruncated } = useTextLayout({
 | 긴 텍스트 (1.2K자) | 17K ops/s | 503K ops/s |
 | CJK 텍스트 (120자) | 159K ops/s | 2.7M ops/s |
 
-[측정 방법 및 재현 →](https://hexdrinker.github.io/pretext-native/ko/benchmarks)
+[측정 방법 및 재현 →](https://hexdrinker.github.io/pretext-native/ko/docs/benchmarks)
 
 ## API
 
@@ -102,13 +102,23 @@ isNativeAvailable(): boolean
 isFontAvailable(fontFamily): boolean
 ```
 
-[전체 API 레퍼런스 →](https://hexdrinker.github.io/pretext-native/ko/api)
+[전체 API 레퍼런스 →](https://hexdrinker.github.io/pretext-native/ko/docs/api)
 
 ## 가이드
 
-- [FlatList `getItemLayout`](https://hexdrinker.github.io/pretext-native/ko/guides/flatlist) — 부드러운 스크롤을 위한 아이템 높이 사전 계산
-- [채팅 버블](https://hexdrinker.github.io/pretext-native/ko/guides/chat) — 한 줄 너비 최적화와 메시지 리스트 사전 캐싱
-- [말줄임 / "더 보기"](https://hexdrinker.github.io/pretext-native/ko/guides/truncation) — 렌더링 없이 오버플로우 감지
+- [FlatList `getItemLayout`](https://hexdrinker.github.io/pretext-native/ko/docs/guides/flatlist) — 부드러운 스크롤을 위한 아이템 높이 사전 계산
+- [채팅 버블](https://hexdrinker.github.io/pretext-native/ko/docs/guides/chat) — 한 줄 너비 최적화와 메시지 리스트 사전 캐싱
+- [말줄임 / "더 보기"](https://hexdrinker.github.io/pretext-native/ko/docs/guides/truncation) — 렌더링 없이 오버플로우 감지
+
+## 예제 앱
+
+[예제 앱](./example)에는 6개의 데모 화면이 포함되어 있습니다: 기본 측정, 동적 너비, 속도 벤치마크, FlatList 통합, 채팅 버블, "더 보기" 말줄임.
+
+```bash
+cd example && yarn install
+cd ios && bundle install && bundle exec pod install && cd ..
+yarn ios   # 또는 yarn android
+```
 
 ## 제한사항
 
@@ -116,7 +126,7 @@ isFontAvailable(fontFamily): boolean
 - JS 폴백은 휴리스틱 기반이며 픽셀 단위로 완벽하지 않음 — 프로덕션 정확도를 위해 네이티브 모듈 사용 권장
 - API는 v0.0.2 — 핵심 API는 안정적이나 보조 API는 v1.0 전에 변경될 수 있음
 
-[자세히 보기 →](https://hexdrinker.github.io/pretext-native/ko/limitations)
+[자세히 보기 →](https://hexdrinker.github.io/pretext-native/ko/docs/limitations)
 
 ## 지원 플랫폼
 

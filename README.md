@@ -55,7 +55,7 @@ const { height, lineCount, isTruncated } = useTextLayout({
 })
 ```
 
-[Full setup guide →](https://hexdrinker.github.io/pretext-native/getting-started)
+[Full setup guide →](https://hexdrinker.github.io/pretext-native/docs/getting-started)
 
 ## Feature Comparison
 
@@ -80,7 +80,7 @@ const { height, lineCount, isTruncated } = useTextLayout({
 | Long text (1.2K chars) | 17K ops/s | 503K ops/s |
 | CJK text (120 chars) | 159K ops/s | 2.7M ops/s |
 
-[Methodology & reproduction →](https://hexdrinker.github.io/pretext-native/benchmarks)
+[Methodology & reproduction →](https://hexdrinker.github.io/pretext-native/docs/benchmarks)
 
 ## API
 
@@ -102,13 +102,23 @@ isNativeAvailable(): boolean
 isFontAvailable(fontFamily): boolean
 ```
 
-[Full API reference →](https://hexdrinker.github.io/pretext-native/api)
+[Full API reference →](https://hexdrinker.github.io/pretext-native/docs/api)
 
 ## Guides
 
-- [FlatList `getItemLayout`](https://hexdrinker.github.io/pretext-native/guides/flatlist) — pre-calculate item heights for smooth scrolling
-- [Chat bubbles](https://hexdrinker.github.io/pretext-native/guides/chat) — single-line width optimization and message list pre-warming
-- [Truncation / "Show More"](https://hexdrinker.github.io/pretext-native/guides/truncation) — detect overflow without rendering
+- [FlatList `getItemLayout`](https://hexdrinker.github.io/pretext-native/docs/guides/flatlist) — pre-calculate item heights for smooth scrolling
+- [Chat bubbles](https://hexdrinker.github.io/pretext-native/docs/guides/chat) — single-line width optimization and message list pre-warming
+- [Truncation / "Show More"](https://hexdrinker.github.io/pretext-native/docs/guides/truncation) — detect overflow without rendering
+
+## Example App
+
+The [example app](./example) includes 6 demo screens: basic measurement, dynamic width, speed benchmark, FlatList integration, chat bubbles, and "Show More" truncation.
+
+```bash
+cd example && yarn install
+cd ios && bundle install && bundle exec pod install && cd ..
+yarn ios   # or yarn android
+```
 
 ## Limitations
 
@@ -116,7 +126,7 @@ isFontAvailable(fontFamily): boolean
 - JS fallback is heuristic-based, not pixel-perfect — use native modules for production accuracy
 - API is at v0.0.2 — core APIs are stable, secondary APIs may evolve before v1.0
 
-[Full details →](https://hexdrinker.github.io/pretext-native/limitations)
+[Full details →](https://hexdrinker.github.io/pretext-native/docs/limitations)
 
 ## Platforms
 

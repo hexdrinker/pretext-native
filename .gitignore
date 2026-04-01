@@ -45,6 +45,10 @@ example/android/.gradle/
 example/android/app/build/
 example/.bundle/
 
+# Docs
+docs/node_modules/
+docs/package-lock.json
+
 # Logs
 *.log
 
