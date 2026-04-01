@@ -7,7 +7,7 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
-import { measureTextSync } from 'pretext-native';
+import { measureTextSync, isFontAvailable } from 'pretext-native';
 
 const SAMPLE_TEXT =
   'The quick brown fox jumps over the lazy dog. 다람쥐 헌 쳇바퀴에 타고파. 0123456789';
@@ -15,16 +15,29 @@ const SAMPLE_TEXT =
 const FONT_SIZES = [12, 14, 16, 18, 24, 32];
 const FONT_WEIGHTS = ['300', '400', '500', '600', '700', '900'] as const;
 
+const FONT_FAMILIES = [
+  { label: 'System', value: undefined },
+  { label: 'Pretendard', value: 'Pretendard-Regular' },
+  { label: 'Pretendard Bold', value: 'Pretendard-Bold' },
+  { label: 'monospace', value: 'monospace' },
+  { label: 'MissingFont', value: 'NonExistentFont-Regular' },
+] as const;
+
 const WIDTH = 300;
 
 export function FontCompareDemo() {
   const [text, setText] = useState(SAMPLE_TEXT);
   const [selectedSizes, setSelectedSizes] = useState<number[]>([14, 18, 24]);
   const [selectedWeight, setSelectedWeight] = useState<string>('400');
+  const [selectedFont, setSelectedFont] = useState<string | undefined>(
+    undefined,
+  );
 
   const toggleSize = (size: number) => {
     setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size].sort((a, b) => a - b),
+      prev.includes(size)
+        ? prev.filter((s) => s !== size)
+        : [...prev, size].sort((a, b) => a - b),
     );
   };
 
@@ -33,6 +46,7 @@ export function FontCompareDemo() {
       text,
       width: WIDTH,
       fontSize,
+      fontFamily: selectedFont,
       fontWeight: selectedWeight,
       lineHeight: Math.round(fontSize * 1.5),
     });
@@ -44,8 +58,8 @@ export function FontCompareDemo() {
       <View style={styles.container}>
         <Text style={styles.heading}>Font Comparison</Text>
         <Text style={styles.desc}>
-          Compare how the same text renders at different font sizes and weights.
-          All measurements are pre-calculated.
+          Compare how the same text renders at different font sizes, weights,
+          and font families. All measurements are pre-calculated.
         </Text>
 
         <TextInput
@@ -55,6 +69,39 @@ export function FontCompareDemo() {
           multiline
           placeholder="Enter text to compare..."
         />
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Font family</Text>
+          <View style={styles.chips}>
+            {FONT_FAMILIES.map((f) => {
+              const isSelected = selectedFont === f.value;
+              const available = f.value
+                ? isFontAvailable(f.value)
+                : true;
+              return (
+                <Pressable
+                  key={f.label}
+                  style={[
+                    styles.chip,
+                    isSelected && styles.chipActive,
+                    !available && styles.chipUnavailable,
+                  ]}
+                  onPress={() => setSelectedFont(f.value)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      isSelected && styles.chipTextActive,
+                    ]}
+                  >
+                    {f.label}
+                    {f.value && !available ? ' (N/A)' : ''}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Font sizes</Text>
@@ -87,7 +134,10 @@ export function FontCompareDemo() {
             {FONT_WEIGHTS.map((w) => (
               <Pressable
                 key={w}
-                style={[styles.chip, selectedWeight === w && styles.chipActive]}
+                style={[
+                  styles.chip,
+                  selectedWeight === w && styles.chipActive,
+                ]}
                 onPress={() => setSelectedWeight(w)}
               >
                 <Text
@@ -107,7 +157,7 @@ export function FontCompareDemo() {
           <View key={fontSize} style={styles.card}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardLabel}>
-                {fontSize}px · weight {selectedWeight}
+                {fontSize}px · {selectedFont ?? 'System'} · w{selectedWeight}
               </Text>
               <Text style={styles.cardMeta}>
                 {result.lineCount} lines · {result.height}px
@@ -120,6 +170,7 @@ export function FontCompareDemo() {
                   fontSize,
                   lineHeight: Math.round(fontSize * 1.5),
                   fontWeight: selectedWeight as any,
+                  fontFamily: selectedFont,
                 }}
               >
                 {text}
@@ -164,6 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
   },
   chipActive: { backgroundColor: '#3b82f6' },
+  chipUnavailable: { backgroundColor: '#fef2f2', borderWidth: 1, borderColor: '#fca5a5' },
   chipText: { fontSize: 12, fontWeight: '600', color: '#6b7280' },
   chipTextActive: { color: '#fff' },
   card: {
