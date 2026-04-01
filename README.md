@@ -68,7 +68,7 @@ Warm cache = **2–5M ops/s** — fast enough to measure thousands of items per 
 | Synchronous API (JSI) | No | No | **Yes** |
 | `getItemLayout` support | No | Manual | **Built-in** |
 | Built-in cache | N/A | No | **Yes (95%+ hit rate)** |
-| `allowFontScaling` | N/A | No | **Yes** |
+| `allowFontScaling` | N/A | Yes | **Yes** |
 | Custom font validation | N/A | No | **Yes (`isFontAvailable`)** |
 | TurboModule (New Arch) | N/A | No | **Yes** |
 | Package size | 0 (built-in) | 167KB | **13KB (core) + 120KB** |

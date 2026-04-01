@@ -68,7 +68,7 @@ pretext-native:
 | 동기 API (JSI) | X | X | **O** |
 | `getItemLayout` 지원 | X | 수동 구현 | **내장** |
 | 캐시 내장 | 해당 없음 | X | **O (95%+ 히트율)** |
-| `allowFontScaling` | 해당 없음 | X | **O** |
+| `allowFontScaling` | 해당 없음 | O | **O** |
 | 커스텀 폰트 검증 | 해당 없음 | X | **O (`isFontAvailable`)** |
 | TurboModule (New Arch) | 해당 없음 | X | **O** |
 | 패키지 크기 | 0 (내장) | 167KB | **13KB (core) + 120KB** |
