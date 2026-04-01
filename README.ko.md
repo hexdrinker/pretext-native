@@ -106,6 +106,7 @@ await prewarmCache(
 | `lineHeight`    | `number`  | X    | 줄 높이 (px)                                    |
 | `letterSpacing` | `number`  | X    | 자간 (px)                                       |
 | `maxLines`      | `number`  | X    | 이 줄 수 이후 잘라냄                            |
+| `allowFontScaling` | `boolean` | X | 시스템 폰트 스케일 적용 (기본값: `true`)        |
 | `enabled`       | `boolean` | X    | `false`로 설정하면 측정 건너뜀 (기본값: `true`) |
 
 **반환값:**
@@ -142,6 +143,10 @@ JS 레벨과 네이티브 레벨의 LRU 캐시를 모두 초기화합니다.
 ### `isNativeAvailable(): boolean`
 
 네이티브 TurboModule이 로드되어 있으면 `true`를 반환합니다. `false`이면 모든 API가 JS 휴리스틱 엔진으로 폴백합니다.
+
+### `isFontAvailable(fontFamily): boolean`
+
+커스텀 폰트가 디바이스에 등록되어 있는지 확인합니다. 측정 전 폰트명 검증에 유용합니다. 측정 시 폰트를 못 찾으면 경고 로그가 출력됩니다.
 
 ## 지원 플랫폼
 

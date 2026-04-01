@@ -104,6 +104,7 @@ React hook for pre-render text measurement. Runs synchronously via JSI when nati
 | `lineHeight`    | `number`  | No       | Line height in pixels                                 |
 | `letterSpacing` | `number`  | No       | Letter spacing in pixels                              |
 | `maxLines`      | `number`  | No       | Truncate after this many lines                        |
+| `allowFontScaling` | `boolean` | No    | Apply system font scale (default: `true`)             |
 | `enabled`       | `boolean` | No       | Set `false` to skip measurement (default: `true`)     |
 
 **Returns:**
@@ -140,6 +141,10 @@ Clears both the JS-tier and native-tier LRU caches.
 ### `isNativeAvailable(): boolean`
 
 Returns `true` if the native TurboModule is loaded. When `false`, all APIs fall back to the JS heuristic engine.
+
+### `isFontAvailable(fontFamily): boolean`
+
+Check if a custom font is registered on the device. Useful for validating font names before measurement. Logs a warning if a font is not found during measurement.
 
 ## Platforms
 

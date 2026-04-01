@@ -21,6 +21,7 @@ title: API — pretext-native
 | `lineHeight` | `number` | X | 줄 높이 (px) |
 | `letterSpacing` | `number` | X | 자간 (px) |
 | `maxLines` | `number` | X | 이 줄 수 이후 잘라냄 |
+| `allowFontScaling` | `boolean` | X | 시스템 폰트 스케일을 fontSize/lineHeight에 적용 (기본값: `true`) |
 | `enabled` | `boolean` | X | `false`로 설정하면 측정 건너뜀 (기본값: `true`) |
 
 ### 반환값 `UseTextLayoutResult`
@@ -171,6 +172,22 @@ if (isNativeAvailable()) {
 
 ---
 
+## `isFontAvailable(fontFamily)`
+
+커스텀 폰트가 디바이스에 등록되어 있는지 확인합니다. 네이티브 모듈이 없으면 `false`를 반환합니다.
+
+측정 시 폰트를 못 찾으면 경고 로그가 출력되어 폰트명 오류를 디버깅할 수 있습니다.
+
+```tsx
+import { isFontAvailable } from 'pretext-native';
+
+if (isFontAvailable('Pretendard-Regular')) {
+  // 이 폰트로 측정해도 안전
+}
+```
+
+---
+
 ## `getFontMetrics(options)`
 
 주어진 폰트 설정에 대한 폰트 메트릭(ascender, descender, line height)을 가져옵니다.
@@ -200,6 +217,7 @@ interface TextMeasureInput {
   lineHeight?: number;
   letterSpacing?: number;
   maxLines?: number;
+  allowFontScaling?: boolean;
 }
 ```
 

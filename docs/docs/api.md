@@ -21,6 +21,7 @@ React hook for pre-render text measurement. Runs synchronously via JSI when nati
 | `lineHeight` | `number` | No | Line height in pixels |
 | `letterSpacing` | `number` | No | Letter spacing in pixels |
 | `maxLines` | `number` | No | Truncate after this many lines |
+| `allowFontScaling` | `boolean` | No | Apply system font scale to fontSize/lineHeight (default: `true`) |
 | `enabled` | `boolean` | No | Set `false` to skip measurement (default: `true`) |
 
 ### Returns `UseTextLayoutResult`
@@ -174,6 +175,22 @@ if (isNativeAvailable()) {
 
 ---
 
+## `isFontAvailable(fontFamily)`
+
+Check if a custom font is registered on the device. Returns `false` when native module is unavailable.
+
+When a font is not found during measurement, a warning is logged to help debug font name mismatches.
+
+```tsx
+import { isFontAvailable } from 'pretext-native';
+
+if (isFontAvailable('Pretendard-Regular')) {
+  // Safe to use this font for measurement
+}
+```
+
+---
+
 ## `getFontMetrics(options)`
 
 Get font metrics (ascender, descender, line height) for a given font configuration.
@@ -203,6 +220,7 @@ interface TextMeasureInput {
   lineHeight?: number;
   letterSpacing?: number;
   maxLines?: number;
+  allowFontScaling?: boolean;
 }
 ```
 
